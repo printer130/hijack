@@ -1,0 +1,15 @@
+.code_text {
+  background-color: #f5f2f0;
+  padding: 1rem;
+  border-radius: 7px;
+  width: 92vw;
+}
+.code_text_sub {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #555;
+}
+.code_span {
+  overflow-wrap: break-word;
+}

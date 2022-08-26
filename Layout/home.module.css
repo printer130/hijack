@@ -1,0 +1,40 @@
+.feed {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 240px 2fr 1fr;
+}
+
+.posts {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.left_aside {
+  margin-top: 48px;
+}
+
+@media only screen and (max-width: 1019px) {
+  .right_aside {
+    display: none;
+  }
+  .grid {
+    grid-template-columns: 240px 1fr;
+  }  
+}
+
+@media only screen and (max-width: 895px) {
+  .left_aside {
+    display: none;
+  }
+  .posts {
+    margin-left: 0rem;
+    margin-right: 0rem;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }  
+}

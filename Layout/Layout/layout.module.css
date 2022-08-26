@@ -1,0 +1,10 @@
+.layout {
+  max-width: 1280px;
+}
+
+@media only screen and (min-width: 1344px) {
+  .layout {
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+}

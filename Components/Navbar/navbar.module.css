@@ -1,0 +1,27 @@
+.items > .anchor {
+  color: #242424;
+}
+.items > .anchor:hover {
+  color: #242424;
+}
+.profile {
+  width: 100%;
+  margin: 0 auto;
+}
+.navbar {
+  position: inherit;
+}
+@media only screen and (min-width: 1024px) {
+  .navbar {
+    position: fixed;
+  }
+  .burger {
+    display: none !important;
+  }
+  .profileNav {
+    display: none !important;
+  }
+  .items {
+    flex-direction: row-reverse;
+  }
+}

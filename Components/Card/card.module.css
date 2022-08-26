@@ -1,0 +1,43 @@
+.card {
+  height: fit-content;
+}
+
+.card:hover {
+  text-decoration: none;
+}
+
+.figure {
+  width: 168px;
+}
+
+.image {
+  border-radius: 7px;
+}
+.media {
+  margin-bottom: 0px;
+}
+.small {
+  display: block;
+}
+.title {
+  overflow: hidden;
+}
+.card_content {
+  padding-top: 0px !important;
+  overflow: hidden;
+}
+@media only screen and (max-width: 475px) {
+  .media_left {
+    width: 100%;
+  }
+  .title {
+    padding-bottom: 1rem;
+  }
+  .media {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .figure {
+    width: 100%;
+  }
+}
