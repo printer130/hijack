@@ -3,6 +3,7 @@
   padding: 1rem;
   border-radius: 7px;
   width: 92vw;
+  max-width: 600px;
 }
 .code_text_sub {
   display: flex;

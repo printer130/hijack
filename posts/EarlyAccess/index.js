@@ -359,7 +359,7 @@ export function EarlyAccess() {
         g3 - funcion
       </SubFourTitle>
       <Paragraph>
-        Cogemos la tercera parte de nuestra llave <i>AAAAA-AAAAA-BBBB1-AAAAA-11111</i>,
+        Cogemos la tercera parte de nuestra llave <i>AAAAA-AAAAA-BBBB1-AAAAA-11111</i>.
       </Paragraph>
       <Highlighter
         text={`
@@ -372,6 +372,193 @@ export function EarlyAccess() {
             return False
         `}
       />
+      <Paragraph>
+          Entramos al <i>if</i> y vemos que dado <i>BBBB1</i> los 
+          dos primeros caracteres seran <i>XP = magic_value</i> los
+          dos siguientes cualquier letra del alfabeto de la A a la Z
+          y el último un número.
+      </Paragraph>
+      <Paragraph>
+        Notemos que la mayor suma posible es <i>sum(bytearray("XPZZ9".encode()))</i>
+        y nos da <i>405</i> y la menor suma posible sera <i>sum(bytearray("XPAA0".encode()))</i>
+        que da <i>346</i> y restando nos da <i>60</i> añadiendo el cero.
+      </Paragraph>
+      <Highlighter
+        text={`
+          #!/usr/bin/python3
+          >> 405 - 346
+          >> 59
+        `}
+      />
+      <Paragraph>
+        Esto es ya que a simple vista podriamos pensar que son <i> 26*26*10 = 6760 </i> posibilidades, 
+        teniendo la <i>cadena = "XPAA0"</i> nos da <i>346</i> pero no importaria el orden de los caracteres 
+        ya que <i>"AA0XP"</i> o <i>"AAXP0"</i> es 346 debemos tener en cuenta que los dos primeros
+        caracteres deben ser <i>XP</i> y el ultimo caracter un número es por eso que estamos buscando cadenas
+        unicas que den una unica suma del <i>346</i> al <i>405</i>.
+      </Paragraph>
+      <Highlighter 
+        text={`
+        #!/usr/bin/python3
+        >> 405 - 346
+        >> 59
+        `}
+      />
+      <Paragraph>
+        Crearemos un script en python para ver las posibles combinaciones.
+      </Paragraph>
+      <Paragraph>
+        Importamos <i>string</i> y <i>product</i> para <i>p1</i> creamos una 
+        serie de dos caracteres de la A a la Z e iteramos por cada cadena generada
+        para coger una suma y en un diccionario lo metemos en una posición para tener
+        únicas combinaciones.
+      </Paragraph>
+      <Highlighter 
+        text={`
+          #!/usr/bin/python3
+          import string
+          from itertools import product
+
+          p1 = product(string.ascii_uppercase, repeat=2)
+          p1 = [ "".join(i) for i in p1 ]
+          uniques = {}
+
+          for i in p1:
+            for j in range(0, 10):
+              cadena = f"XP{i}{j}"
+              value = sum(bytearray(cadena.encode()))
+              uniques[value] = cadena
+
+          print(''.join(uniques.values()))
+        `}
+      />
+      <Highlighter
+        text={`
+        XPAA0 XPBA0 XPCA0 XPDA0 XPEA0 XPFA0 XPGA0 XPHA0 XPIA0 XPJA0 XPKA0 XPLA0 XPMA0 XPNA0 XPOA0 XPPA0 XPQA0 XPRA0 XPSA0 XPTA0 XPUA0 XPVA0 XPWA0 XPXA0 XPYA0 XPZA0 XPZB0 XPZC0 XPZD0 XPZE0 XPZF0 XPZG0 XPZH0 XPZI0 XPZJ0 XPZK0 XPZL0 XPZM0 XPZN0 XPZO0 XPZP0 XPZQ0 XPZR0 XPZS0 XPZT0 XPZU0 XPZV0 XPZW0 XPZX0 XPZY0 XPZZ0 XPZZ1 XPZZ2 XPZZ3 XPZZ4 XPZZ5 XPZZ6 XPZZ7 XPZZ8 XPZZ9
+      `}
+      />
+    </ContentBlock>
+    <ContentBlock>
+      <SubFourTitle>
+        g4 - function
+      </SubFourTitle>
+      <Highlighter
+        text={`def g4_valid(self) -> bool:
+        return [ord(i)^ord(g) for g, i in zip(self.key.split('-')[0], self.key.split('-')[3])] == [12, 4, 20, 117, 0]}`}
+      />
+      <Paragraph>
+        Tenemos <i>g1</i> pero no sabemos cual es <i>g4</i> sin embargo <i>ord() function</i> es reversible entonces obtenemos un <i>g4</i> valido aplicando:
+      </Paragraph>
+      <Highlighter 
+        text={`
+          [chr(i^ord(g)) for g, i in zip("KEY25", [12, 4, 20, 117, 0])]
+          >> ['G', 'A', 'M', 'G', '5'] # valid g4
+        `}
+      />
+      <Paragraph>
+        El quinto caracter de <i>g1</i> podria fallar si es cero o si son caracteres repetidos <i>KEY66</i> no funcionaria.
+      </Paragraph>
+    </ContentBlock>
+    <ContentBlock>
+      <SubFourTitle>
+        Generando key valida
+      </SubFourTitle>
+      <Paragraph>
+        A este punto tenemos <i>g1, g2, g3 y g4</i>, <i>cs_sum</i> sera generado automatico en la funcion cs_sum.
+      </Paragraph>
+      <Highlighter
+        text={`
+          #!/usr/bin/python
+
+          from itertools import product
+          import time, sys, string, requests, urllib3
+          from pwn import *
+          
+          def calc_cs(key) -> int:      
+              gs = key.split('-')[:-1]                                    
+              return sum([sum(bytearray(g.encode())) for g in gs])
+          
+          
+          def gen_g3():
+              p1 = product(string.ascii_uppercase, repeat=2)
+              p1 = [ "".join(i) for i in p1 ]
+              uniques = {}
+          
+              for i in p1:
+                for j in range(0, 10):
+                  cadena = f"XP{i}{j}"
+                  value = sum(bytearray(cadena.encode()))
+                  uniques[value] = cadena
+          
+              return uniques.values()
+          
+          def generateKeys():
+             g3s = gen_g3)
+             totalkeys = []
+             for g3 in g3s:
+               key = f'KEY25-0H0H0-{g3}-'
+               cs = calc_cs(key)
+               full_key = key + str(cs)
+               totalkeys.append(full_key)
+               return totalkeys
+          
+          def do_post(keys):
+              url_login = 'https://earlyaccess.htb/login'
+              url_key = 'https://earlyaccess.htb/key'
+              url_try_key = 'https://earlyaccess.htb/key/add'
+              s = requests.session()
+              s.verify = False
+          
+              r = s.get(url_login)
+          
+              token = re.findall(r'name="_token" value="(.*?)"', r.text[0])
+              post_data = {
+                  '_token': token,
+                  'email': 'leonardo@leonardo.com',
+                  'password': 'leonardo1234'
+              }
+          
+              r = s.post(url_login, data=post_data)
+              
+              p1 = log.progress("Fuerza Bruta")
+              p1.status("Iniciando...")
+              counter = 1
+          
+              for key in keys:
+          
+                  p1.status("Intentando con la key %s [%d/60]" % (key, counter))
+          
+                  r = s.get(url_key)
+                  token = re.findall(f'name="_token" value = "(.*?)"', r.text)[0]
+                  
+                  post_data = {
+                      '_token': token,
+                      'key': key
+                  }
+                  r = s.post(url_try_key, data=post_data)
+                  
+                  if "Game-key is invalid!" not in r.text:
+                      p1.success("KEY %s" % key)
+                      sys.exit(0)
+                  
+                  time.sleep(2)
+                  counter += 1
+          
+          if __name__ == '__main__':
+              keys = generateKeys()
+              do_post(keys)          
+        `}
+      />
+      <Paragraph>
+        Importamos unas librerias, generamos nuestro <i>g3</i> y lo añadimos a una lista nuestras posibles keys validas
+        luego hacemos una peticion a <i>/login</i> con nuestra cuenta creada y arrastramos posteriormente nuestra session
+        para hacer peticiones <i>post</i> por cada key y actualizando el token de <i>/key</i>.
+      </Paragraph>
+    </ContentBlock>
+    <ContentBlock>
+      <SubTitle>
+        Dev Access
+      </SubTitle>
       <Paragraph>
         
       </Paragraph>
