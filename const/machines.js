@@ -2,7 +2,7 @@ export const MACHINES = [
   [
     "Late", {
     name: 'Late - Guia',
-    description: 'Una de las maquinas mas faciles de la plataforma HTB.',
+    description: 'Aunque sencilla pero una máquina muy robusta por sus vulnerabilidades.',
     posted: '17-08-2022',
     src: '/late_info.webp',
     alt: 'Maquina Late en Hack The Box una de las mas faciles',
@@ -14,7 +14,7 @@ export const MACHINES = [
   [
     "EarlyAccess", {
     name: 'EarlyAccess - Guia',
-    description: 'Dificultad de la maquina insane y muy larga.',
+    description: 'Una de mis máquinas favoritas.',
     posted: '17-08-2022',
     src: '/earlyAccess_info.webp',
     alt: 'Maquina Late en Hack The Box una de las mas faciles',
