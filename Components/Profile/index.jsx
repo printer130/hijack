@@ -19,9 +19,7 @@ export function Profile() {
         </div>
       </div>
       <div className="content">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-        <a href="#">#css</a> <a href="#">#responsive</a>
+        Desarrollador y apasionado linux. 
       </div>
     </div>
   </div>

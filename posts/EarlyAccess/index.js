@@ -6,6 +6,7 @@ import { SubTitle } from '../../Components/SubTitle'
 import { ContentBlock } from '../../Layout/ContentBlock'
 import Image from 'next/image'
 import { Highlighter } from '../../utils/SyntaxHighlighter'
+import { Anchor } from '../../Components/Anchor'
 
 export function EarlyAccess() {
   return <>
@@ -650,7 +651,7 @@ export function EarlyAccess() {
         height={357}
       />
       <Paragraph>
-        Guardamos el texto en un archivo <i>hash.txt</i> para luego intentar romperlo con <a src='https://github.com/openwall/john' target='_blank' noreferer={true}>jhon</a>.
+        Guardamos el texto en un archivo <i>hash.txt</i> para luego intentar romperlo con <Anchor src='https://github.com/openwall/john' >jhon</Anchor>.
       </Paragraph>
       <Highlighter
         text={`
@@ -735,7 +736,7 @@ export function EarlyAccess() {
         height={235}
       />
       <Paragraph>
-        Aplicaremos <a src='https://www.php.net/manual/es/wrappers.php.php' noreferer={true}>wrappers</a>, y convertiremos el texto en <i>base64</i> para luego 
+        Aplicaremos <Anchor src='https://www.php.net/manual/es/wrappers.php.php' >wrappers</Anchor>, y convertiremos el texto en <i>base64</i> para luego 
         leerlo.
       </Paragraph>
       <Image
@@ -970,7 +971,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Ejecutaremos <a src='https://github.com/carlospolop/PEASS-ng' noreferer={true}>linpeas</a>, y veremos un correo de Game-adm a drew,
+        Ejecutaremos <Anchor src='https://github.com/carlospolop/PEASS-ng'>linpeas</Anchor>, y veremos un correo de Game-adm a drew,
         el cual dice que si el juego se rompe automaticamente estara online en 1m aproximadamente. 
       </Paragraph>
       <Paragraph>
@@ -1171,7 +1172,7 @@ export function EarlyAccess() {
       <Paragraph>
         genial nos dio una contraseña nos conectamos <i>drew@earlyaccess:/home$ su game-adm</i>
         este usuario pertenece al grupo <i>4(adm)</i> recordemos que teniamos <i>arp</i> con las 
-        capacidades de <i>=ep</i> la cual nos permite leer archivos como indica <a src='https://gtfobins.github.io/gtfobins/arp/#file-read' noreferer={true}>gtfobins</a>,
+        capacidades de <i>=ep</i> la cual nos permite leer archivos como indica <Anchor src='https://gtfobins.github.io/gtfobins/arp/#file-read'>gtfobins</Anchor>,
         entonces procedemos de la siguiente manera... 
       </Paragraph>
       <Highlighter
