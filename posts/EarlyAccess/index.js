@@ -12,14 +12,13 @@ export function EarlyAccess() {
   return <>
     <ContentBlock>
       <Paragraph>
-        La maquina de una compania de juegos,
-        incluiremos un XSS y seguidamente un SQLI para ganar acceso de Admin a la pagina de login, luego nos moveremos por el subdominio <i>game.earlyaccess.htb</i> y <i>dev.earlyaccess.htb</i>.
-      </Paragraph>
+        La máquina de una compañía de juegos,
+        incluiremos un XSS y seguidamente un SQLI para ganar acceso de Admin a la pagina de login, luego nos moveremos por el subdominio <i>game.earlyaccess.htb</i> y <i>dev.earlyaccess.htb</i>.</Paragraph>
       <Paragraph>
         Inyectaremos un payload una vez siendo Admin y obtendremos una consola en un contenedor de Docker, luego atacaremos una API para filtrar una contraseña e ingresaremos a otro contenedor de Docker, escalaremos privilegios a root ganando acceso al archivo shadow y la contraseña.
       </Paragraph>
       <Paragraph>
-        Por ultimo abusaremos capacidades en <i> /usr/sbin/arp </i>  para leer a travez de arp como root la Flag y la llave SSH.
+        Por último abusaremos capacidades en <i> /usr/sbin/arp </i>  para leer a través de arp como root la Flag y la llave SSH.
       </Paragraph>
     </ContentBlock>
     <ContentBlock>
@@ -99,8 +98,7 @@ export function EarlyAccess() {
         Una vez dentro nuestra cuenta vemos varias pestañas nuevas Home, Messaging, Forum, Store y Register Key, notamos que al enviar mensajes nos responden al instante probamos alguna SQLI pero no obtenemos nada.
       </Paragraph>
       <Paragraph>
-        Sabemos que algunas veces los desarrolladores se enfocan en un solo apartado y se olvidan de otros por ejemplo en la pestaña del perfil tenemos la opcion de cambiar el nombre vemos si al enviar un mensaje con nuestro nuevo nombre <i>&#60;h1&gt;test &#60;h1&#62;</i> se interpreta HTML.
-      </Paragraph>
+      Sabemos que algunas veces los desarrolladores se enfocan en un solo apartado y se olvidan de otros, por ejemplo en la pestaña del perfil tenemos la opción de cambiar el nombre vemos si al enviar un mensaje con nuestro nuevo nombre <i>&#60;h1&gt;test &#60;h1&#62;</i> se interpreta HTML.      </Paragraph>
       <Image
         src='/html_injection_gimp.webp'
         layout="responsive"
@@ -108,7 +106,7 @@ export function EarlyAccess() {
         height={475}
       />
       <Paragraph>
-        Intentamos un secuestro de sesion, ponemos un servidor  por el puerto 80 y esperamos que admin abra nuestro mensaje para que nos llegue sus cookies y lo remplazamos en nuestra session actual.
+        Intentamos un secuestro de sesión, ponemos un servidor  por el puerto 80 y esperamos que admin abra nuestro mensaje para que nos llegue sus cookies y lo remplazamos en nuestra sesión actual.
       </Paragraph>
       <Image
         src='/hijack_session.webp'
@@ -259,7 +257,7 @@ export function EarlyAccess() {
         }
       />
       <Paragraph>
-        Vemos que nuestra llave debe tener el formato <strong><i>AAAAA-AAAAA-BBBB1-AAAAA-11111</i></strong> donde <i>A</i> es una letra o número alfanumérico mayúscula de la A a la Z y del 0 al 9, donde <i>B </i> es una letra alfabetica de la A a la Z, y donde <i>1 </i> representa un número del 0 al 9 separado por <i>-</i>.  
+        Vemos que nuestra llave debe tener el formato <strong><i>AAAAA-AAAAA-BBBB1-AAAAA-11111</i></strong> donde <i>A</i> es una letra o número alfanumérico mayúscula de la A a la Z y del 0 al 9, donde <i>B </i> es una letra alfabética de la A a la Z, y donde <i>1 </i> representa un número del 0 al 9 separado por <i>-</i>.  
       </Paragraph>
       <Highlighter
         text={`def valid_format(self) -> bool:
@@ -268,7 +266,7 @@ export function EarlyAccess() {
     </ContentBlock>
     <ContentBlock>
       <SubFourTitle>
-        g1 - function
+        g1 - función
       </SubFourTitle>
       <Highlighter
         text={`
@@ -286,10 +284,10 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Coje los primeros 3 caracteres y hace un Bitwise Left Shift operator por cada caracter recorriendo 1, 2, 3 bits respectivamente luego hace un modulo de 256 y un Bitwise XOR del mismo caracter y por último el resultado lo compara con 221, 81 y 145.
+        Coge los primeros 3 caracteres y hace un Bitwise Left Shift operator por cada carácter recorriendo 1, 2, 3 bits respectivamente, luego hace un modulo de 256 y un Bitwise XOR del mismo carácter y por último el resultado lo compara con 221, 81 y 145.
       </Paragraph>
       <Paragraph>
-       Intuimos que concatenando números y todas las letras del alfabeto y aplicando la lógica de la funcion y pasandole la pósicion 0, 1 y 2 obtendremos nuestro <i>g1</i> como en el siguiente script y lo podemos filtrar por 221 luego por 81 y 145.   
+        Intuimos que concatenando números y todas las letras del alfabeto y aplicando la lógica de la función y pasándole la posición 0, 1 y 2 obtendremos nuestro <i>g1</i> como en el siguiente script y lo podemos filtrar por 221 luego por 81 y 145.   
       </Paragraph>
         <Highlighter 
           text={`
@@ -314,9 +312,8 @@ export function EarlyAccess() {
         ]}
         />
         <Paragraph>
-          Obtenemos nuestra cadena màgica para la funcion g1 <i>KEY25</i>, los últimos dos caractes son números arbitrarios pero no únicos. 
+          Obtenemos nuestra cadena mágica para la función g1 <i>KEY25</i>, los últimos dos caracteres son números arbitrarios pero no únicos. 
         </Paragraph>
-
         <Highlighter
           text={`
             return len(set(g1)) == len(g1)
@@ -325,7 +322,7 @@ export function EarlyAccess() {
     </ContentBlock>
     <ContentBlock>
       <SubFourTitle>
-        g2 - funcion
+        g2 - función
       </SubFourTitle>
       <Highlighter
         text={`
@@ -338,10 +335,10 @@ export function EarlyAccess() {
       />
       <Paragraph>
         Cogemos la segunda parte de nuestra <i>AAAAA-AAAAA-BBBB1-AAAAA-11111</i>,
-        para <i>p1 = "ABCDE"[::2]</i> python coge los caracteres pares en este caso <i>ACE, </i> para <i>p2 = "ABCDE"[1::2]</i> obtenemos <i>BD</i>  en las posiciónes impares.
+        para <i>p1 = "ABCDE"[::2]</i> python coge los caracteres pares en este caso <i>ACE, </i> para <i>p2 = "ABCDE"[1::2]</i> obtenemos <i>BD</i>  en las posiciones impares.
       </Paragraph>
       <Paragraph>
-        Por último debemos comprobar que <i>p1</i> sea igual a <i>p2</i>.
+        Por último, debemos comprobar que <i>p1</i> sea igual a <i>p2</i>.
       </Paragraph>
       <Highlighter
         text={`
@@ -357,7 +354,7 @@ export function EarlyAccess() {
     </ContentBlock>
     <ContentBlock>
       <SubFourTitle>
-        g3 - funcion
+        g3 - función
       </SubFourTitle>
       <Paragraph>
         Cogemos la tercera parte de nuestra llave <i>AAAAA-AAAAA-BBBB1-AAAAA-11111</i>.
@@ -374,14 +371,14 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-          Entramos al <i>if</i> y vemos que dado <i>BBBB1</i> los 
-          dos primeros caracteres seran <i>XP = magic_value</i> los
-          dos siguientes cualquier letra del alfabeto de la A a la Z
-          y el último un número.
+        Entramos al <i>if</i> y vemos qué dado <i>BBBB1</i> los 
+        dos primeros caracteres serán <i>XP = magic_value</i> los
+        dos siguientes cualquier letra del alfabeto de la A a la Z
+        y el último un número.
       </Paragraph>
       <Paragraph>
         Notemos que la mayor suma posible es <i>sum(bytearray("XPZZ9".encode()))</i>
-        y nos da <i>405</i> y la menor suma posible sera <i>sum(bytearray("XPAA0".encode()))</i>
+        y nos da <i>405</i> y la menor suma posible será <i>sum(bytearray("XPAA0".encode()))</i>
         que da <i>346</i> y restando nos da <i>60</i> añadiendo el cero.
       </Paragraph>
       <Highlighter
@@ -392,11 +389,11 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Esto es ya que a simple vista podriamos pensar que son <i> 26*26*10 = 6760 </i> posibilidades, 
-        teniendo la <i>cadena = "XPAA0"</i> nos da <i>346</i> pero no importaria el orden de los caracteres 
-        ya que <i>"AA0XP"</i> o <i>"AAXP0"</i> es 346 debemos tener en cuenta que los dos primeros
-        caracteres deben ser <i>XP</i> y el ultimo caracter un número es por eso que estamos buscando cadenas
-        unicas que den una unica suma del <i>346</i> al <i>405</i>.
+        Esto es ya que a simple vista podríamos pensar que son <i> 26*26*10 = 6760 </i> posibilidades, 
+        teniendo la <i>cadena = "XPAA0"</i> nos da <i>346</i>, pero no importaría el orden de los caracteres 
+        puesto que <i>"AA0XP"</i> o <i>"AAXP0"</i> es 346, debemos tener en cuenta que los dos primeros
+        caracteres deben ser <i>XP</i> y el último carácter un número es por eso que estamos buscando cadenas
+        Únicas que den una única suma del <i>346</i> al <i>405</i>.
       </Paragraph>
       <Highlighter 
         text={`
@@ -441,14 +438,14 @@ export function EarlyAccess() {
     </ContentBlock>
     <ContentBlock>
       <SubFourTitle>
-        g4 - function
+        g4 - función
       </SubFourTitle>
       <Highlighter
         text={`def g4_valid(self) -> bool:
         return [ord(i)^ord(g) for g, i in zip(self.key.split('-')[0], self.key.split('-')[3])] == [12, 4, 20, 117, 0]}`}
       />
       <Paragraph>
-        Tenemos <i>g1</i> pero no sabemos cual es <i>g4</i> sin embargo <i>ord() function</i> es reversible entonces obtenemos un <i>g4</i> valido aplicando:
+        Tenemos <i>g1</i>, pero no sabemos cuál es <i>g4</i>, sin embargo, <i>ord() function</i> es reversible, entonces obtenemos un <i>g4</i> válido aplicando:
       </Paragraph>
       <Highlighter 
         text={`
@@ -457,15 +454,15 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        El quinto caracter de <i>g1</i> podria fallar si es cero o si son caracteres repetidos <i>KEY66</i> no funcionaria.
+        El quinto carácter de <i>g1</i> podría fallar si es cero o si son caracteres repetidos <i>KEY66</i> no funcionaria.
       </Paragraph>
     </ContentBlock>
     <ContentBlock>
       <SubFourTitle>
-        Generando key valida
+        Generando key válida
       </SubFourTitle>
       <Paragraph>
-        A este punto tenemos <i>g1, g2, g3 y g4</i>, <i>cs_sum</i> sera generado automatico en la funcion cs_sum.
+        A este punto tenemos <i>g1, g2, g3 y g4</i>, <i>cs_sum</i> será generado automático en la función cs_sum.
       </Paragraph>
       <Highlighter
         text={`
@@ -551,8 +548,8 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Importamos unas librerias, generamos nuestro <i>g3</i> y lo añadimos a una lista nuestras posibles keys validas
-        luego hacemos una peticion a <i>/login</i> con nuestra cuenta creada y arrastramos posteriormente nuestra session
+        Importamos unas librerías, generamos nuestro <i>g3</i> y lo añadimos a una lista, nuestras posibles keys válidas
+        luego hacemos una petición a <i>/login</i> con nuestra cuenta creada y arrastramos posteriormente nuestra sesión
         para hacer peticiones <i>post</i> por cada key y actualizando el token de <i>/key</i>.
       </Paragraph>
       <Image
@@ -576,7 +573,7 @@ export function EarlyAccess() {
         height={662}
       />
       <Paragraph>
-        Despues de jugar al juego de la serpiente, nos vamos a la pestaña de scoreboard
+        Después de jugar al juego de la serpiente, nos vamos a la pestaña de scoreboard
         y vemos el tablero.
       </Paragraph>
       <Image
@@ -586,7 +583,7 @@ export function EarlyAccess() {
         height={296}
       />
       <Paragraph>
-        Recordemos que en el foro hablaban que habia un error en la parte del scoreboard
+        Recordemos que en el foro hablaban que había un error en la parte del scoreboard
         relacionado con el nombre de usuario.
       </Paragraph>
       <Image
@@ -597,7 +594,7 @@ export function EarlyAccess() {
       />
       <Paragraph>
         Nos vamos a la pestaña de Perfil y añadimos una <i>'</i> al final de nuestro nombre
-        volvemos al scoreboard y que paso?? 
+        retornamos al scoreboard...
       </Paragraph>
       <Image
         src='/scoreboard_error.webp'
@@ -606,13 +603,13 @@ export function EarlyAccess() {
         height={277}
       />
       <Paragraph>
-      Basado en la respuesta añadimos un parentesis al final, actualizamos nuestro
-      nombre de usuario <i>leonardo') -- -</i> y vemos que en el score no tenemos error
-      es una buena señal porque ahora podremos leer la DB. 
+        Basado en la respuesta, añadimos un paréntesis al final, actualizamos nuestro
+        nombre de usuario <i>leonardo') -- -</i> y vemos que en el score no tenemos error
+        es una buena señal porque ahora podremos leer la DB.
       </Paragraph>
       <Paragraph>
-        Hay muchas formas de tener acceso basados en <i>SQL</i> nosotros usaremos la siguiente
-        logica.
+        Hay muchas formas de tener acceso basado en <i>SQL</i> nosotros usaremos la siguiente
+        lógica.
       </Paragraph>
       <Highlighter 
         text={`
@@ -659,7 +656,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        !SAS¡ Iniciamos session en <i>https://dev.earlyaccess.htb/index.php</i> con las contraseña <i>gameover</i>.
+        !SAS¡Iniciamos sesión en <i>https://dev.earlyaccess.htb/index.php</i> con la contraseña <i>gameover</i>.
       </Paragraph>
     </ContentBlock>
     <ContentBlock>
@@ -673,7 +670,7 @@ export function EarlyAccess() {
         height={1374}
       />
       <Paragraph>
-        Vemos una herramienta de hasheo, cual texto ingresado lo 
+        Vemos una herramienta de hasheo, cuál texto ingresado lo 
         convierte en <i>MD5</i> o <i>SHA1</i>..
       </Paragraph>
       <Image
@@ -683,7 +680,7 @@ export function EarlyAccess() {
         height={307}
       />
       <Paragraph>
-        al ver con mas cuidado y utilizando <i>Burpsuite</i> hace una peticio a <i>/actions/hash.php</i>.
+        al ver con más cuidado y utilizando <i>Burpsuite</i> hace una petición a <i>/actions/hash.php</i>.
       </Paragraph>
       <Highlighter
         text={`
@@ -691,10 +688,10 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        La respuesta es una redireccion 302 a <i>/home.php?tool=hashing</i> y nos retorna con el hash.
+        La respuesta es una redirección 302 a <i>/home.php?tool=hashing</i> y nos retorna con el hash.
       </Paragraph>
       <Paragraph>
-        A este punto pensamos que existen mas archivos <i>.php</i> en el directorio <i>/actions</i> asi que vamos
+        A este punto pensamos que existen más archivos <i>.php</i> en el directorio <i>/actions</i> así que vamos
         a aplicar un <i>fuzzing</i> a esta ruta.
       </Paragraph>
       <Highlighter
@@ -725,8 +722,8 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Tenemos un parametro!, Al apuntar a <i>asd</i> nos retorna <i>invalid path</i> pero por ejemplo
-        al cambiar a un archi que sabemos que existe por ejemplo <i>file.php</i> nos retorna un codigo de estado
+        Tenemos un parámetro!, Al apuntar a <i>asd</i> nos retorna <i>invalid path</i> pero por ejemplo
+        al cambiar a un archi que sabemos que existe por ejemplo <i>file.php</i> nos retorna un código de estado
         exitoso.
       </Paragraph>
       <Image
@@ -756,9 +753,9 @@ export function EarlyAccess() {
         hash.php | source code
       </SubTitle>
       <Paragraph>
-        Al final del archivo vemos una funcion <i>hash_pw</i> la cual llama la atencion
-        en <i>php</i> si la funcion tiene una @ antes el <i>string</i> recibido lo trata como
-        si fuera una funcion.
+        Al final del archivo vemos una función <i>hash_pw</i> la cual llama la atención
+        en <i>php</i> si la función tiene una @ antes el <i>string</i> recibido lo trata como
+        si fuera una función.
       </Paragraph>
       <Highlighter
         text={`
@@ -775,7 +772,7 @@ export function EarlyAccess() {
       />
       <Paragraph>
         Notamos que hay una variable llamada debug, y dice que permite hashes personalizados,
-        el desarrollador debio dejar esto a proposito para temas de debug...
+        el desarrollador debió dejar esto a propósito para temas de debug...
       </Paragraph>
       <Highlighter 
         text={`
@@ -841,7 +838,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Vemos que estamos en un contenedor ya que nuestro target es <i>10.10.11.110</i>, 
+        Vemos que estamos en un contenedor, ya que nuestro target es <i>10.10.11.110</i>, 
         ahora tenemos acceso al sistema antes de continuar hacemos un tratamiento de la consola con <i>script</i>.
       </Paragraph>
       <Highlighter
@@ -858,7 +855,7 @@ export function EarlyAccess() {
         `}
       />
       <SubTitle>
-        usuario game-adm | Shell
+        Usuario game-adm | Shell
       </SubTitle>
       <SubThreeTitle>
         Enumeration
@@ -907,7 +904,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Ahora utilizando nc, verificaremos si existe alguna maquina con el nombre <i>API</i>
+        Ahora, utilizando nc, verificaremos si existe alguna máquina con el nombre <i>API</i>
       </Paragraph>
       <Highlighter
         text={`
@@ -916,8 +913,8 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        y si existe tal maquina lo que no sabemos es que puertos tiene abiertos para 
-        ello crearemos un scaner en <i>/tmp</i>
+        y si existe tal máquina lo que no sabemos es que puertos tiene abiertos para 
+        ello crearemos un escáner en <i>/tmp</i>
       </Paragraph>
       <Highlighter
         text={`
@@ -936,7 +933,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-       Vemos el puerto 5000 abierto intentaremos descargarlo...  
+       Observamos el puerto 5000 abierto, intentaremos descargarlo...  
       </Paragraph>
       <Highlighter
         text={`
@@ -972,10 +969,10 @@ export function EarlyAccess() {
       />
       <Paragraph>
         Ejecutaremos <Anchor src='https://github.com/carlospolop/PEASS-ng'>linpeas</Anchor>, y veremos un correo de Game-adm a drew,
-        el cual dice que si el juego se rompe automaticamente estara online en 1m aproximadamente. 
+        el cual dice que si el juego se rompe automáticamente estará online en 1m aproximadamente. 
       </Paragraph>
       <Paragraph>
-        Tambien vemos que ...
+        También vemos que ...
       </Paragraph>
       <Highlighter
         text={`
@@ -985,8 +982,8 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        teniendo arp que vale <i>=ep</i> podemos leer archivos root pero arp solo pueden ejecutarlo los del grupo adm, 
-        entonces si nos converdimos en <i>game-adm</i> podremos escalar privilegios.
+        teniendo arp que vale <i>=ep</i> podemos leer archivos root, pero arp solo pueden ejecutarlo los del grupo adm, 
+        entonces si nos convertimos en <i>game-adm</i> podremos escalar privilegios.
       </Paragraph>
       <Highlighter
         text={`
@@ -998,13 +995,13 @@ export function EarlyAccess() {
         Root Shell
       </SubTitle>
       <Paragraph>
-        Ahora toca meterse como root, vemos un <i>.ssh</i> con un rsa publica y privada, en la publica
+        Ahora toca meterse como root, vemos un <i>.ssh</i> con un rsa pública y privada, en la publica
         nos muestra <i>game-tester@game-server</i> al final del output vemos un nuevo usuario <i>game-tester</i> y un contenedor <i>game-server</i> 
         que no nos resuelve por ejemplo <i>ping -c 1 game-server</i>.
       </Paragraph>
       <Paragraph>
-        Toca hacer un descubrimiento de puertos en <i>hostname -I</i> y verificar cual es el que tiene el puerto  22 abierto asi ingresaremos con la rsa pública, para 
-        ello montaremos un script.  
+        Toca hacer un descubrimiento de puertos en <i>hostname -I</i> y verificar cuál es el que tiene el puerto  22 abierto así ingresaremos con la rsa pública, para 
+        ello montaremos un script. 
       </Paragraph>
       <Highlighter
         text={`
@@ -1020,7 +1017,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Ahora teniendo los hostname terminando en <i>.0</i> crearemos otro script para ver en cual de ellos esta el puerto 22 abierto.
+        Ahora teniendo los hostname terminando en <i>.0</i> crearemos otro script para ver en cuál de ellos está el puerto 22 abierto.
       </Paragraph>
       <Highlighter
         text={`
@@ -1047,8 +1044,8 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        Ahora estamos como <i>game-tester</i> con el host <i>game-server</i> tal vez en algun puerto de este 
-        host esta corriendo el servidor web para ello vemos...
+        Ahora estamos como <i>game-tester</i> con el host <i>game-server</i> tal vez en algún puerto de este 
+        host está corriendo el servidor web para ello vemos...
       </Paragraph>
       <Highlighter
         text={`
@@ -1059,8 +1056,8 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        de primeras no tenemos resolucion a esa ruta que esta en un contenedor pero podriamos ingresar 
-        con ssh y el parametro -D
+        de primeras no tenemos resolución a esa ruta que está en un contenedor pero podríamos ingresar 
+        con ssh y el parámetro -D
       </Paragraph>
       <Highlighter
         text={`
@@ -1068,7 +1065,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        con la extension de foxy proxy por ejemplo configuramos...
+        con la extensión de foxy proxy por ejemplo configuramos...
       </Paragraph>
       <Image
         src='/early_foxy_proxy.webp'
@@ -1083,7 +1080,7 @@ export function EarlyAccess() {
         height={222}
       />
       <Paragraph>
-        ahora en <i>/</i> tenemos un archivo llamado <i>entrypoint.sh</i>
+        Ahora en <i>/</i> tenemos un archivo llamado <i>entrypoint.sh</i>
       </Paragraph>
       <Highlighter
         text={`
@@ -1114,7 +1111,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-        coje cada archivo dentro de <i>/docker-entrypoint.d</i> y lo ejecuta, pero el <i>node-server.sh</i> lo tendra que traerlo de alguna ruta para ello 
+        coger cada archivo dentro de <i>/docker-entrypoint.d</i> y lo ejecuta, pero el <i>node-server.sh</i> lo tendrá que traerlo de alguna ruta para ello 
         ejecutamos...
       </Paragraph>
       <Highlighter
@@ -1124,7 +1121,7 @@ export function EarlyAccess() {
         `}
       />
       <Paragraph>
-      es esta la ruta donde tendremos que crear nuestro script para ganar acceso :D.. y 
+      es esta la ruta donde tendremos que crear nuestro script para ganar acceso y 
       tratar de petar el juego como por ejemplo <i>curl http://127.0.0.1:9999/autoplay -d 'rounds=-1'</i>
       </Paragraph>
       <Highlighter
@@ -1171,7 +1168,7 @@ export function EarlyAccess() {
       />
       <Paragraph>
         genial nos dio una contraseña nos conectamos <i>drew@earlyaccess:/home$ su game-adm</i>
-        este usuario pertenece al grupo <i>4(adm)</i> recordemos que teniamos <i>arp</i> con las 
+        este usuario pertenece al grupo <i>4(adm)</i> recordemos que teníamos <i>arp</i> con las 
         capacidades de <i>=ep</i> la cual nos permite leer archivos como indica <Anchor src='https://gtfobins.github.io/gtfobins/arp/#file-read'>gtfobins</Anchor>,
         entonces procedemos de la siguiente manera... 
       </Paragraph>
