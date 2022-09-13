@@ -2,7 +2,7 @@ export const MACHINES = [
   [
     "Late", {
     name: 'Late - Guia',
-    description: 'Máquina sencilla pero muy robusta por sus vulnerabilidades.',
+    description: 'Máquina sencilla.',
     posted: '10-08-2022',
     src: '/late_info.webp',
     alt: 'Maquina Late en Hack The Box una de las mas faciles',
