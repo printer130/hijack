@@ -17,7 +17,19 @@ export const MACHINES = [
     description: 'Una de mis máquinas favoritas por la variedad de temas.',
     posted: '17-08-2022',
     src: '/earlyAccess_info.webp',
-    alt: 'Maquina Late en Hack The Box una de las mas faciles',
+    alt: 'Máquina Late en Hack The Box una de las mas faciles',
+    release: '23 Apr 2022',
+    chips: ['Cracking zip files', 'SMB Enumeration via ipv6', 'RPC Enumeration','Windows defender Evasion', 'Abusing kerberos - kerbrute (valid user enumeration)'],
+    tags: ['OSCP', 'OSEP', 'Active Directory']
+    }
+  ],
+  [
+    "Cap", {
+    name: 'Cap - Guia',
+    description: 'Máquina corta que abusaremos de la capability SET-SUID en python.',
+    posted: new Date().toLocaleDateString(),
+    src: '/cap/Cap.png',
+    alt: 'Máquina Cap',
     release: '23 Apr 2022',
     chips: ['Cracking zip files', 'SMB Enumeration via ipv6', 'RPC Enumeration','Windows defender Evasion', 'Abusing kerberos - kerbrute (valid user enumeration)'],
     tags: ['OSCP', 'OSEP', 'Active Directory']
