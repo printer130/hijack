@@ -47,9 +47,6 @@ export function Navbar() {
             <Link href="/">
                 <a className={`link navbar-item ${anchor}`}>Home</a>
             </Link>
-            <Link href="/">
-                <a className={`link navbar-item ${anchor}`}>Machines</a>
-            </Link>
             <div className={`${refBurger.current ?? 'navbar-item' } ${profileNav}`}>
                 <Profile />
             </div>
