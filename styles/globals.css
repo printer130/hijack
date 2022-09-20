@@ -37,6 +37,10 @@ h1 {
   font-size: 3.2em;
 }
 
+i {
+  word-break: break-all;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
