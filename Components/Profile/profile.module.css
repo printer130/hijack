@@ -1,3 +1,11 @@
 .card_image {
-    display: none !important;
+  display: none !important;
+}
+
+.icon_and_name {
+  display:flex;
+}
+
+.loe {
+  padding-left: 7px;
 }

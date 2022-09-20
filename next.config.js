@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    domains: ['www.hackthebox.com','res.cloudinary.com'],
+  },
 }
 
 module.exports = nextConfig
