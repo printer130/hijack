@@ -2,7 +2,7 @@ export const MACHINES = [
   [
     "Late", {
     name: 'Late',
-    description: 'Ganamos acceso por SSTI (Server Side Template Injection) y escalaremos privilegios manipulando un archivo que se ejecuta en intervalos.',
+    description: 'Empezamos por SSTI (Server Side Template Injection) y escalaremos privilegios manipulando un archivo que se ejecuta en intervalos.',
     posted: '10-08-2022',
     src: '/late_info.webp',
     alt: 'Late Hack The Box',
