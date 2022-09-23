@@ -14,16 +14,15 @@ export function Late() {
           text=' nmap -p- --open --min-rate 5000 -Pn 10.10.11.156 -oG puertosAbiertos'
         />
         <Paragraph>
-          Vemos que en el puerto 80 está corriendo un servidor web <strong>late.htb</strong> lo agregamos a nuestro archivo <strong>/etc/hosts</strong> de nuestra máquina
+          Vemos que en el puerto 80 está corriendo un servidor web <i>late.htb</i> lo agregamos a nuestro archivo <i>/etc/hosts</i> de nuestra máquina
         </Paragraph>
         <Highlighter text='10.10.11.156 late.htb' />
       </ContentBlock>
-  
       <ContentBlock className="content block">
         <SubTitle>Enumeración</SubTitle>
         <Paragraph>
-          Mientras hacemos un recorrido por la página notamos que en la parte de abajo tenemos unos nuevos enlaces que apuntan a <strong>images.late.htb </strong>,
-          lo añadimos a <strong>/etc/hosts </strong>para luego ingresar a la URL, y vemos la siguiente vista:
+          Mientras hacemos un recorrido por la página notamos que en la parte de abajo tenemos unos nuevos enlaces que apuntan a <i>images.late.htb </i>,
+          lo añadimos a <i>/etc/hosts </i>para luego ingresar a la URL, y vemos la siguiente vista:
         <button className="js-modal-trigger" data-target="modal-js-example">
             <img
               layout="fill"
@@ -37,7 +36,7 @@ export function Late() {
       <ContentBlock>
         <SubTitle>Archivo hosts</SubTitle>
         <Paragraph>
-          En el archivo <strong>/etc/hosts</strong> de nuestra máquina añadimos:
+          En el archivo <i>/etc/hosts</i> de nuestra máquina añadimos:
         </Paragraph>
         <Highlighter text='10.10.11.156 images.late.htb' />
         <Paragraph>Nos vamos a la nueva URL: </Paragraph>
@@ -54,10 +53,10 @@ export function Late() {
         <Paragraph>
           Vemos en el título que esta página usa Flask, necesitamos saber como funciona este conversor de imagen a texto
           creamos nuestra imagen con Photoshop, GIMP, etc. Testeamos la App para vulnerabilidades comunes como XSS, SQLi y CMDi
-          abrimos e ingresamos payloads para estas vulnerabilidades enganchamos que una SSTI funciona <strong>&#123; &#123; 7 * 7 &#125; &#125;</strong>
+          abrimos e ingresamos payloads para estas vulnerabilidades enganchamos que una SSTI funciona <i>&#123; &#123; 7 * 7 &#125; &#125;</i>
         </Paragraph>
         <Paragraph>
-          Lo subimos a la web y nos retorna un archivo llamado <strong>result.txt</strong> con el siguiente contenido.
+          Lo subimos a la web y nos retorna un archivo llamado <i>result.txt</i> con el siguiente contenido.
         </Paragraph>
       </ContentBlock >
   

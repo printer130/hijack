@@ -7,7 +7,7 @@ import Head from 'next/head'
 export default function Home() {
   return <>
     <Head>
-      <title>✌️ Hijack 🙌 Contenido de Pentesting Web</title>
+      <title>✌️ HIJACK 🙌 Contenido de Pentesting Web</title>
     </Head>
     <div className={`${grid}`}>
       < LeftAside />

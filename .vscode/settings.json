@@ -1,4 +1,7 @@
 {
     "html.format.wrapLineLength": 60,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "editor.wordWrap": "on",
+    "editor.wordWrapColumn": 60,
+    "workbench.quickOpen.closeOnFocusLost": false
 }

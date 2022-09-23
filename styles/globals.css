@@ -4,8 +4,9 @@
   font-size: 16px;
   line-height: 24px;
   color-scheme: light dark;
-  color: #242424;
-
+  color: #fddcdc;
+  --dark: #181a1b;
+  --white: #efe;
   letter-spacing: .25px;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -30,6 +31,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--dark);
 }
 
 h1 {
@@ -39,7 +41,6 @@ h1 {
 i {
   word-break: break-all;
 }
-
 button {
   border-radius: 8px;
   border: 1px solid transparent;

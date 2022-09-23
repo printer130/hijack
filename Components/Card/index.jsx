@@ -14,7 +14,7 @@ export function Card({
       <div className={`card-content ${card_content}`}>
         <div className={`media ${media}`}>
           <div className={`media-left ${media_left}`}>
-           <figure className={`image ${figure}`}>
+            <figure className={`image ${figure}`}>
               <Image
                 className={`${image}`}
                 src={src}
@@ -26,15 +26,15 @@ export function Card({
             </figure>
           </div>
           <div className={`media-content ${media_content}`}>
-            <p className={`${title} title`}>{name} - Guía</p>
+            <p className={`${title} title has-text-white-ter`}>{name} - Guía</p>
           </div>
         </div>
         <div className={`content ${content}`}>
           <Paragraph>
             {description}
-              <small className={`${small}`}>
+              <small className={`has-text-grey ${small}`}>
                 Publicado:
-                <time className="subtitle is-6" dateTime={posted}> {posted}</time>
+                <time className="subtitle is-6 has-text-grey" dateTime={posted}> {posted}</time>
               </small>
           </Paragraph>
         </div>
