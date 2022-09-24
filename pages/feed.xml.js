@@ -11,7 +11,7 @@ export async function getServerSideProps({ res }) {
   MACHINES.map(([n, post]) => {
     feed.item({
       title: post.title,
-      url: `https://${webURL}/blog/${post.name}`,
+      url: `https://${webURL}/box/${post.name}`,
       date: post.posted,
       description: post.description
     });
