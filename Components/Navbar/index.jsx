@@ -22,11 +22,11 @@ return <nav
     <Link href='/'>
       <a className="navbar-item link">
         <Image
-          src="/"
-          width={112}
-          height={28}
-          alt="Leonardo Torrico"
           fill="responsive"
+          alt="Leonardo Torrico"
+          src="/key.png"
+          width={128}
+          height={122}
         />
       </a>
       </Link>

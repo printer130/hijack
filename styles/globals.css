@@ -37,7 +37,9 @@ body {
 h1 {
   font-size: 3.2em;
 }
-
+li {
+  color: #efe;
+}
 i {
   word-break: break-all;
 }

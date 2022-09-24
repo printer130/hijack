@@ -258,15 +258,17 @@ mattermost              [Status: 200, Size: 3122, Words: 141, Lines: 1, Duration
         />
         <Paragraph>
           vemos cuatro apartados que son interesantes que los leas yo te lo resumiré:
-          <ul>
-            <li>Sabemos que Jess tiene un gato Tigrou 🐈.</li>
-            <li>El usuario Jaeger nos dijo que hay una máquina llamada <i>deploy</i> y nos pasó sus credenciales <i>username: jaeger 
-              password: Sh0ppyBest@pp!</i>.
-            </li>
-            <li>Van a usar docker para el despliegue. 🎁 </li>
-            <li>EL usuario Josh está aprendiendo c++ y hay un archivo password-manager.</li>
-          </ul>
-          Ingresemos por ssh.
+        </Paragraph> 
+        <ul>
+          <li>Sabemos que Jess tiene un gato Tigrou 🐈.</li>
+          <li>El usuario Jaeger nos dijo que hay una máquina llamada <i>deploy</i> y nos pasó sus credenciales <i>username: jaeger 
+            password: Sh0ppyBest@pp!</i>.
+          </li>
+          <li>Van a usar docker para el despliegue. 🎁 </li>
+          <li>EL usuario Josh está aprendiendo c++ y hay un archivo password-manager.</li>
+        </ul>
+        <Paragraph>
+          Ingresamos por ssh:
         </Paragraph>
         <Highlighter
           text={`
