@@ -14,24 +14,27 @@ export function Card({
       <div className={`card-content ${card_content}`}>
         <div className={`media ${media}`}>
           <div className={`media-left ${media_left}`}>
-            <figure className={`image is-3by2 ${figure}`}>
-              <img
+            <figure className={`image ${figure}`}>
+              <Image
                 className={`${image}`}
                 src={src}
+                fill="responsive"
+                width={602}
+                height={379}
                 alt={alt}
               />
             </figure>
           </div>
           <div className={`media-content ${media_content}`}>
-            <p className={`${title} title`}>{name}</p>
+            <p className={`${title} title has-text-white-ter`}>{name} - Guía</p>
           </div>
         </div>
         <div className={`content ${content}`}>
           <Paragraph>
             {description}
-              <small className={`${small}`}>
+              <small className={`has-text-grey ${small}`}>
                 Publicado:
-                <time className="subtitle is-6" dateTime={posted}> {posted}</time>
+                <time className="subtitle is-6 has-text-grey" dateTime={posted}> {posted}</time>
               </small>
           </Paragraph>
         </div>

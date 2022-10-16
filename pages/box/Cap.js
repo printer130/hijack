@@ -5,6 +5,7 @@ export default function CapPage() {
   return <DynamicHero
     imageUrl='/cap/Cap.png'
     alt='Informacion de la maquina Late'
+    seo='cap'
   >
      <Cap />
   </DynamicHero>

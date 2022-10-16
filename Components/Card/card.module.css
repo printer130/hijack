@@ -2,10 +2,6 @@
   height: fit-content;
 }
 
-.card:hover {
-  text-decoration: none;
-}
-
 .figure {
   width: 168px;
 }
@@ -18,14 +14,22 @@
 }
 .small {
   display: block;
+  color: var(--white);
 }
 .title {
   overflow: hidden;
 }
+
 .card_content {
   padding-top: 0px !important;
   overflow: hidden;
 }
+
+.card_content:hover ~ div > .media_content > .title {
+  color: red !important;
+  background-color: green;
+}
+
 @media only screen and (max-width: 475px) {
   .media_left {
     width: 100%;

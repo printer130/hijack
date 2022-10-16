@@ -4,8 +4,9 @@
   font-size: 16px;
   line-height: 24px;
   color-scheme: light dark;
-  color: #242424;
-
+  color: #fddcdc;
+  --dark: #181a1b;
+  --white: #efe;
   letter-spacing: .25px;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,7 +24,6 @@ p {
 
 a {
   font-weight: 500;
-  color: #fff;
   text-decoration: inherit;
 }
 
@@ -31,12 +31,18 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--dark);
 }
 
 h1 {
   font-size: 3.2em;
 }
-
+li {
+  color: #efe;
+}
+i {
+  word-break: break-all;
+}
 button {
   border-radius: 8px;
   border: 1px solid transparent;

@@ -1,3 +1,3 @@
 export function SubTitle ({children}) {
-    return <h1>{children}</h1>
+    return <h1 className="has-text-success">{children}</h1>
 }
