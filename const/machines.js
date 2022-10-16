@@ -16,8 +16,6 @@ export const MACHINES = [
     "EarlyAccess", {
     name: 'EarlyAccess',
     description: 'Una de mis máquinas favoritas.',
-    name: 'EarlyAccess - guía',
-    description: 'Una de mis máquinas favoritas por la variedad de temas.',
     posted: '17-08-2022',
     src: '/earlyAccess_info.webp',
     alt: 'Máquina Late en Hack The Box una de las mas faciles',
@@ -69,10 +67,10 @@ export const MACHINES = [
   ],
   [
     "Photobomb", {
-    name: 'Photobomb - guía',
+    name: 'Photobomb',
     description: 'Un poco de Burpsuite :).',
     posted: new Date().toLocaleDateString(),
-    src: 'https://res.cloudinary.com/djc1umong/image/upload/v1663697041/Trick_1_gawv9i.webp',
+    src: 'https://res.cloudinary.com/djc1umong/image/upload/v1665956516/Photobomb_znmv8y.webp',
     alt: 'Photobomb',
     release: '23 Apr 2022',
     chips: ['Cracking zip files', 'SMB Enumeration via ipv6', 'RPC Enumeration','Windows defender Evasion', 'Abusing kerberos - kerbrute (valid user enumeration)'],
