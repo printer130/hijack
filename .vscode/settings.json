@@ -1,7 +1,11 @@
 {
     "html.format.wrapLineLength": 60,
     "editor.tabSize": 2,
+<<<<<<< HEAD
     "editor.wordWrap": "on",
     "editor.wordWrapColumn": 60,
     "workbench.quickOpen.closeOnFocusLost": false
+=======
+    "editor.fontFamily": "'Hack Nerd Font Mono', 'monospace', monospace"
+>>>>>>> 2c186c3 (bomb)
 }
