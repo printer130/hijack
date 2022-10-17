@@ -8,7 +8,7 @@ export async function getServerSideProps({ res }) {
     site_url: `https://${webURL}`,
     feed_url: `https://${webURL}/feed.xml`
   });
-  MACHINES.map(([n, post]) => {
+  MACHINES.map(([_, post]) => {
     feed.item({
       title: post.title,
       url: `https://${webURL}/box/${post.name}`,

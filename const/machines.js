@@ -3,7 +3,7 @@ export const MACHINES = [
     "Late", {
     name: 'Late',
     description: 'Empezamos por SSTI (Server Side Template Injection) y escalaremos privilegios manipulando un archivo que se ejecuta en intervalos de tiempo.',
-    name: 'Late - guía',
+    name: 'Late',
     description: 'Máquina sencilla.',
     posted: '10-08-2022',
     src: '/late_info.webp',
@@ -45,7 +45,6 @@ export const MACHINES = [
     name: 'Trick',
     description: 'Atacaremos el servicio SMTP con dig, buscaremos subdominios con ffuf y utilizaremos sqlmap, escalaremos privilegios mediante fail2ban.',
     posted: "31-08-2022",
-    name: 'Trick - guía',
     description: 'Atacaremos Smtp con dig, fuzzing, y sqlmap para escalar privilegio abusaremos fail2ban .',
     posted: new Date().toLocaleDateString(),
     src: 'https://res.cloudinary.com/djc1umong/image/upload/v1663697041/Trick_1_gawv9i.webp',
