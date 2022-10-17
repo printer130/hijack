@@ -30,7 +30,7 @@ export const MACHINES = [
     posted: "24-08-2022",
     src: '/cap/Cap.webp',
     alt: 'Máquina Cap Hack The Box',
-    name: 'Cap - guía',
+    name: 'Cap',
     description: 'Máquina corta que abusaremos de la capability SET-SUID en python.',
     posted: new Date().toLocaleDateString(),
     src: '/cap/Cap.png',
