@@ -6,10 +6,11 @@ import Image from 'next/image'
 
 export function Navbar() {
 const refBurger = useRef()
+
 function handleClick() {
-const target = refBurger.current.dataset.target
-const $target = document.getElementById(target)
-refBurger.current.classList.toggle('is-active')
+  const target = refBurger.current.dataset.target
+  const $target = document.getElementById(target)
+
   $target.classList.toggle('is-active')
 }
 
@@ -44,14 +45,17 @@ return <nav
       <span aria-hidden="true"></span>
     </a>
     </div>
-    <div id="navbarBasicExample" className={`navbar-menu ${items}`}>
-        <Link href="/">
-            <a className={`link navbar-item ${anchor}`}>Home</a>
-        </Link>
-        <Link href="/scripts">
-            <a className={`link navbar-item ${anchor}`}>Scripts</a>
-        </Link>
-        <div className={`${refBurger.current ?? 'navbar-item' } ${profileNav}`}>
+  <div
+    id="navbarBasicExample" 
+    className={`navbar-menu ${items}`}
+  >
+      <Link href="/">
+          <a onClick={handleClick} className={`link navbar-item ${anchor}`}>Home</a>
+      </Link>
+      <Link href="/scripts">
+          <a onClick={handleClick} className={`link navbar-item ${anchor}`}>Scripts</a>
+      </Link>
+      <div className={`${refBurger.current ?? 'navbar-item' } ${profileNav}`}>
       <Profile />
     </div>
   </div>
