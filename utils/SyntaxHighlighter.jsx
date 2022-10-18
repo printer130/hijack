@@ -31,7 +31,7 @@ export const Highlighter = ({ text, children }) => (
                   margin: 1rem 0;
                   padding: .5em;
                   border-radius: 7px;
-                  overflow: scroll;
+                  overflow: auto;
                 }
                 section {
                   overflow: auto;

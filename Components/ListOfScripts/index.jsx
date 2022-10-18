@@ -16,7 +16,7 @@ Script started, file is /dev/null
 $ ^Z
 
 my_host$ stty raw -echo; fg
-                      reset
+                    reset
 reset: unknown terminal type unknown
 Terminal type? xterm
 
