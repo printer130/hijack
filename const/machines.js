@@ -2,9 +2,8 @@ export const MACHINES = [
   [
     "Late", {
     name: 'Late',
-    description: 'Empezamos por SSTI (Server Side Template Injection) y escalaremos privilegios manipulando un archivo que se ejecuta en intervalos de tiempo.',
+    description: 'SSTI (Server Side Template Injection) y privilegios "cron".',
     name: 'Late',
-    description: 'Máquina sencilla.',
     posted: '10-08-2022',
     src: '/late_info.webp',
     alt: 'Late Hack The Box',
@@ -15,7 +14,7 @@ export const MACHINES = [
   [
     "EarlyAccess", {
     name: 'EarlyAccess',
-    description: 'Una de mis máquinas favoritas.',
+    description: 'Favorita.',
     posted: '17-08-2022',
     src: '/earlyAccess_info.webp',
     alt: 'Máquina Late en Hack The Box una de las mas faciles',
@@ -31,8 +30,7 @@ export const MACHINES = [
     src: '/cap/Cap.webp',
     alt: 'Máquina Cap Hack The Box',
     name: 'Cap',
-    description: 'Máquina corta que abusaremos de la capability SET-SUID en python.',
-    posted: new Date().toLocaleDateString(),
+    description: 'Capability SET-SUID',
     src: '/cap/Cap.png',
     alt: 'Máquina Cap',
     release: '23 Apr 2022',
@@ -43,10 +41,8 @@ export const MACHINES = [
   [
     "Trick", {
     name: 'Trick',
-    description: 'Atacaremos el servicio SMTP con dig, buscaremos subdominios con ffuf y utilizaremos sqlmap, escalaremos privilegios mediante fail2ban.',
+    description: 'Servicio SMTP con la herramienta dig, subdominios con ffuf y sqlmap, root con fail2ban.',
     posted: "31-08-2022",
-    description: 'Atacaremos Smtp con dig, fuzzing, y sqlmap para escalar privilegio abusaremos fail2ban .',
-    posted: new Date().toLocaleDateString(),
     src: 'https://res.cloudinary.com/djc1umong/image/upload/v1663697041/Trick_1_gawv9i.webp',
     alt: 'Máquina Trick',
     chips: ['Cracking zip files', 'SMB Enumeration via ipv6', 'RPC Enumeration','Windows defender Evasion', 'Abusing kerberos - kerbrute (valid user enumeration)'],
@@ -68,7 +64,7 @@ export const MACHINES = [
     "Photobomb", {
     name: 'Photobomb',
     description: 'Un poco de Burpsuite :).',
-    posted: new Date().toLocaleDateString(),
+    posted: "14-10-2022",
     src: 'https://res.cloudinary.com/djc1umong/image/upload/v1665956516/Photobomb_znmv8y.webp',
     alt: 'Photobomb',
     release: '23 Apr 2022',
