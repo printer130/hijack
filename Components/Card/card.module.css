@@ -1,7 +1,9 @@
 .card {
   height: fit-content;
 }
-
+.card_content {
+  background-color: #24123b !important;
+}
 .figure {
   width: 168px;
 }
@@ -17,11 +19,6 @@
   color: var(--white);
 }
 .title {
-  overflow: hidden;
-}
-
-.card_content {
-  padding-top: 0px !important;
   overflow: hidden;
 }
 

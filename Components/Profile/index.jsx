@@ -1,12 +1,11 @@
-import Image from 'next/image'
-import { card_image, icon_and_name, loe } from './profile.module.css'
+import { icon_and_name, loe, card_style } from './profile.module.css'
 import { Anchor } from '../Anchor'
 import { Printer } from '../Icons/printer'
 import { Star } from '../Icons/star'
 
 export function Profile() {
-  return <div className={`card`}>
-    <div className="card-content">
+  return <div className={`card ${card_style}`}>
+    <div className={`card-content`}>
       <div className="media">
         <div className="media-content">
           <Anchor cls={icon_and_name} src='https://github.com/loepardis'>
@@ -20,7 +19,7 @@ export function Profile() {
         <Printer />
       </div>
       <div>
-        <Anchor src="https://github.com/printer130/hijack">Dale like aquí <Star /></Anchor>.
+        <Anchor src="https://github.com/printer130/hijack">Dame estrellita :/ <Star /></Anchor>.
       </div>
     </div>
   </div>

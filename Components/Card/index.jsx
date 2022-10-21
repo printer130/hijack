@@ -10,7 +10,7 @@ export function Card({
 }, namekey 
 }) {
   return <Link href={`/box/${namekey}`} >
-    <a className={`card block ${feed} ${card}`}>
+    <a className={`card block ${feed} ${card} `}>
       <div className={`card-content ${card_content}`}>
         <div className={`media ${media}`}>
           <div className={`media-left ${media_left}`}>
@@ -34,7 +34,8 @@ export function Card({
             {description}
               <small className={`has-text-grey ${small}`}>
                 Publicado:
-                <time className="subtitle is-6 has-text-grey" dateTime={posted}> {posted}</time>
+                <time className="subtitle is-6 has-text-grey" dateTime={posted}> {posted}
+                </time>
               </small>
           </Paragraph>
         </div>

@@ -1,9 +1,5 @@
-.card {
-  background-color: #eee;
-}
-
-.card_image {
-  display: none !important;
+.card_style {
+  background-color: #24123b;
 }
 
 .icon_and_name {
