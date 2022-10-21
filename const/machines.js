@@ -38,7 +38,7 @@ export const MACHINES = [
   [
     "Shoppy", {
     name: 'Shoppy',
-    description: 'Montaremos con Docker pero antes Fuzzing e inyectaremos SQL.',
+    description: 'Montaremos con Docker sin antes Fuzzear e Inyectar SQL.',
     posted: "22-09-2022",
     src: 'https://res.cloudinary.com/djc1umong/image/upload/v1663907495/Shoppy_1_gfaxxf.webp',
     alt: 'Máquina Shoppy'
@@ -47,7 +47,7 @@ export const MACHINES = [
   [
     "Photobomb", {
     name: 'Photobomb',
-    description: 'Un poco de Burpsuite :).',
+    description: 'Burpsuite.',
     posted: "14-10-2022",
     src: 'https://res.cloudinary.com/djc1umong/image/upload/v1665956516/Photobomb_znmv8y.webp',
     alt: 'Photobomb'

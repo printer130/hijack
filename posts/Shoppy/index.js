@@ -1,16 +1,17 @@
-import { Highlighter } from "../../utils/SyntaxHighlighter"
-import { Paragraph } from "../../Components/Paragraph"
-import { ContentBlock } from "../../Layout/ContentBlock"
-import { SubTitle } from "../../Components/SubTitle"
-import { Anchor } from "../../Components/Anchor"
+import { Highlighter } from '../../utils/SyntaxHighlighter'
+import { Paragraph } from '../../Components/Paragraph'
+import { ContentBlock } from '../../Layout/ContentBlock'
+import { SubTitle } from '../../Components/SubTitle'
+import { Anchor } from '../../Components/Anchor'
 import Image from 'next/image'
 
-export function Shoppy() {
-  return <>
+export function Shoppy () {
+  return (
+    <>
       <ContentBlock>
         <SubTitle>Rust Scan</SubTitle>
         <Paragraph>
-          Empezamos con un escaneo de todos los puertos con <Anchor src="https://github.com/RustScan/RustScan">RustScan</Anchor>.
+          Empezamos con un escaneo de todos los puertos con <Anchor src='https://github.com/RustScan/RustScan'>RustScan</Anchor>.
         </Paragraph>
         <Highlighter
           text={`
@@ -111,13 +112,13 @@ Nmap done: 1 IP address (1 host up) scanned in 116.78 seconds
           vemos el puerto <i>ssh</i>, una web en el puerto 83 que corre nginx 1.23 y una posible DB en el 9093, ingresamos a la Web.
         </Paragraph>
         <Image
-          fill="responsive"
+          fill='responsive'
           width={729}
           height={427}
-          src="https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_htb_1_nysk1g.webp"
+          src='https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_htb_1_nysk1g.webp'
         />
         <Paragraph>
-          vemos un contador, y nada en el código fuente. Intentemos empezando por un fuzzing a <i>shoppy.htb/FUZZ</i> y buscar subdominios en 
+          vemos un contador, y nada en el código fuente. Intentemos empezando por un fuzzing a <i>shoppy.htb/FUZZ</i> y buscar subdominios en
           <i>FUZZ.shoppy.htb</i>.
         </Paragraph>
         <Highlighter
@@ -151,40 +152,40 @@ js                      [Status: 301, Size: 171, Words: 7, Lines: 11, Duration: 
           encontramos un apartado login y admin que son interesantes 📄, admin nos devuelve un estado 302 desde el servidor y login uno exitoso. Ingresamos a <i>/login</i>.
         </Paragraph>
         <Paragraph>
-          después de jugar con el formulario, la URL y por un posible <Anchor src="https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/">Path Traversal</Anchor>, descubrimos que podemos Inyectar SQL 💉.
+          después de jugar con el formulario, la URL y por un posible <Anchor src='https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/'>Path Traversal</Anchor>, descubrimos que podemos Inyectar SQL 💉.
         </Paragraph>
         <Image
-          fill="responsive"
+          fill='responsive'
           width={566}
           height={740}
-          src="https://res.cloudinary.com/djc1umong/image/upload/v1663900750/shoppy_login_3_lnbvg4.webp"
+          src='https://res.cloudinary.com/djc1umong/image/upload/v1663900750/shoppy_login_3_lnbvg4.webp'
         />
         <Paragraph>
           la página nos permite interactuar con <i>Search for Users</i>, buscamos por nuestro query. Y damos clic en <i>Download Export</i> 📥.
         </Paragraph>
         <Image
-          fill="responsive"
+          fill='responsive'
           width={881}
           height={570}
-          src="https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_admin_searchuser_4_n89fpf.webp"
+          src='https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_admin_searchuser_4_n89fpf.webp'
         />
-        
+
         <Image
-          fill="responsive"
+          fill='responsive'
           width={905}
           height={292}
-          src="https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_admin_download_5_z6poel.webp"
+          src='https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_admin_download_5_z6poel.webp'
         />
         <Image
-          fill="responsive"
+          fill='responsive'
           width={618}
           height={372}
-          src="https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_export_json_6_gepqeb.webp"
+          src='https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_export_json_6_gepqeb.webp'
         />
         <Paragraph>
           vemos dos usuarios con sus contraseñas seguramente encriptadas(md5) toca sacar el <i>hashcat</i> o el <i>john</i>, ingresamos los hashes a nuestro archivo hash y proseguimos de manera sencilla...
         </Paragraph>
-        
+
         <Highlighter
           text={`
 ❯ cat hash
@@ -221,7 +222,7 @@ c/htb/shoppy took 17s
           ✨hash ROTO❤️ <i>remembermethisway</i> contraseña para el usuario <i>josh</i>.
           Cuando empezamos a hacer fuzzing a <i>http://shoppy/login</i> no es mala idea también hacerlo a <i>http://FUZZ.shoppy.login</i>.
         </Paragraph>
-        <Highlighter 
+        <Highlighter
           text={`
 ❯ ffuf -w /usr/share/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt -u http://shoppy.htb -H "Host: FUZZ.shoppy.htb" -fw 5
 ...
@@ -242,27 +243,28 @@ mattermost              [Status: 200, Size: 3122, Words: 141, Lines: 1, Duration
           `}
         />
         <Image
-          fill="responsive"
+          fill='responsive'
           width={1114}
           height={432}
-          src="https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoopy_josh_login_7_vkxaue.webp"
+          src='https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoopy_josh_login_7_vkxaue.webp'
         />
         <Paragraph>
           tenemos un login y un usuario <i>josh </i> con contraseña <i>remembermethisway</i>.
         </Paragraph>
         <Image
-          fill="responsive"
+          fill='responsive'
           width={987}
           height={799}
-          src="https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_josh_panel_8_d1efwq.webp"
+          src='https://res.cloudinary.com/djc1umong/image/upload/v1663900749/shoppy_josh_panel_8_d1efwq.webp'
         />
         <Paragraph>
           vemos cuatro apartados que son interesantes que los leas yo te lo resumiré:
-        </Paragraph> 
+        </Paragraph>
         <ul>
           <li>Sabemos que Jess tiene un gato Tigrou 🐈.</li>
-          <li>El usuario Jaeger nos dijo que hay una máquina llamada <i>deploy</i> y nos pasó sus credenciales <i>username: jaeger 
-            password: Sh0ppyBest@pp!</i>.
+          <li>El usuario Jaeger nos dijo que hay una máquina llamada <i>deploy</i> y nos pasó sus credenciales <i>username: jaeger
+            password: Sh0ppyBest@pp!
+                                                                                                               </i>.
           </li>
           <li>Van a usar docker para el despliegue. 🎁 </li>
           <li>EL usuario Josh está aprendiendo c++ y hay un archivo password-manager.</li>
@@ -291,7 +293,7 @@ User jaeger may run the following commands on shoppy:
           podemos ejecutar un archivo <i>/home/deploy/password-manager</i> con el usuario deploy
         </Paragraph>
         <Highlighter
-text={`
+          text={`
 ❯ ssh jaeger@shoppy.htb
 ❯ jaeger@shoppy.htb's password: 
 ❯ jaeger@shoppy:~$ ls
@@ -375,11 +377,12 @@ root
           `}
         />
         <Image
-          fill="responsive"
+          fill='responsive'
           width={703}
           height={806}
-          src="https://res.cloudinary.com/djc1umong/image/upload/v1663900750/shoppy_pwned_uwfliq.webp"
+          src='https://res.cloudinary.com/djc1umong/image/upload/v1663900750/shoppy_pwned_uwfliq.webp'
         />
       </ContentBlock>
     </>
-  }
+  )
+}

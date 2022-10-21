@@ -2,9 +2,9 @@ import Highlight, { defaultProps } from 'prism-react-renderer'
 import theme from 'prism-react-renderer/themes/shadesOfPurple'
 
 export const Highlighter = ({ text, children }) => (
-  <Highlight 
+  <Highlight
     {...defaultProps}
-    theme={theme} 
+    theme={theme}
     code={text ? text.trim() : children}
     language='python'
   >
@@ -14,7 +14,7 @@ export const Highlighter = ({ text, children }) => (
           <>
             <pre className={className} style={style}>
               {tokens.map((line, i) => (
-                <section key={i+1} {...getLineProps({ line, key: i })}>
+                <section key={i + 1} {...getLineProps({ line, key: i })}>
                   <div>
                     {line.map((token, key) => (
                       <span key={key} {...getTokenProps({ token, key })} />

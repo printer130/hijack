@@ -19,7 +19,7 @@ export function Profile() {
         <Printer />
       </div>
       <div>
-        <Anchor src="https://github.com/printer130/hijack">Dame estrellita :/ <Star /></Anchor>.
+        <Anchor src="https://github.com/printer130/hijack">Gracias por la Estrellita <Star /></Anchor>.
       </div>
     </div>
   </div>
