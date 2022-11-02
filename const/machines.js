@@ -61,5 +61,14 @@ export const MACHINES = [
       src: 'https://res.cloudinary.com/djc1umong/image/upload/v1667435625/Ambassador_ufms7x.webp',
       alt: 'Ambassador'
     }
+  ],
+  [
+    'Awkward', {
+      name: 'Awkward',
+      description: 'Fuzzing, JWT.',
+      posted: '31-10-2022',
+      src: 'https://res.cloudinary.com/djc1umong/image/upload/v1667435496/Awkward_fbwwdn.webp',
+      alt: 'Awkward'
+    }
   ]
 ]
