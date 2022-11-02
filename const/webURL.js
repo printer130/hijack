@@ -1,1 +1,1 @@
-export const webURL= "hijack.vercel.app"
+export const webURL = 'hijack.vercel.app'

@@ -4,15 +4,17 @@ import { LeftAside } from '../Container/Left_Aside'
 import { RightAside } from '../Container/Right_Aside'
 import Head from 'next/head'
 
-export default function Home() {
-  return <>
-    <Head>
-      <title>Hijack - Pentesting Web</title>
-    </Head>
-    <div className={`${grid}`}>
-      < LeftAside />
-      <ListOfCards />
-      <RightAside />
-    </div >
-  </>
+export default function Home () {
+  return (
+    <>
+      <Head>
+        <title>Hijack - Pentesting Web</title>
+      </Head>
+      <div className={`${grid}`}>
+        <LeftAside />
+        <ListOfCards />
+        <RightAside />
+      </div>
+    </>
+  )
 }

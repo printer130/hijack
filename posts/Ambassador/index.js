@@ -3,7 +3,6 @@ import { Paragraph } from '../../Components/Paragraph'
 import { ContentBlock } from '../../Layout/ContentBlock'
 import { SubTitle } from '../../Components/SubTitle'
 import { Anchor } from '../../Components/Anchor'
-import Image from 'next/image'
 
 export function Ambassador () {
   return (
