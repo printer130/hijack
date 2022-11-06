@@ -13,7 +13,7 @@ export function DynamicHero ({
   return (
     <>
       <Head>
-        <title>Guía 📋 {seo} 💪 Hack The Box</title>
+        <title>Guía 📋 {seo} Hack The Box</title>
       </Head>
       <div className={`${grid}`}>
         <LeftAside />
